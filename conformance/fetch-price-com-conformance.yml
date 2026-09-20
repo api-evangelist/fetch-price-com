@@ -1,0 +1,98 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live probes of api.fetch-price.com and fetch-price.com on 2026-09-19 plus the provider's docs
+  (https://fetch-price.com/docs/), llms.txt, robots.txt, the agent card and the MCP registry record.
+  The provider publishes no OpenAPI; the openapi/ file is API Evangelist-generated, so nothing below is
+  derived from a provider contract - every entry is evidenced by a fetched document or observed response.
+standards:
+- id: a2a-1.0.0
+  name: Agent2Agent protocol 1.0.0 - agent card + JSON-RPC binding
+  conforms: true
+  evidence: >-
+    https://fetch-price.com/.well-known/agent-card.json (200, application/json) declares protocolVersion
+    1.0.0, capabilities as an object and a two-skill array; graded conformant in a2a/fetch-price-com-a2a.yml.
+    POST https://api.fetch-price.com/a2a message/send answers with a JSON-RPC error object (-32602) on an
+    empty message, so the binding the card declares is live.
+- id: jsonrpc-2.0
+  name: JSON-RPC 2.0
+  conforms: true
+  evidence: 'Observed responses {"jsonrpc":"2.0","id":n,"error":{"code":-32601,"message":"Method not found: ..."}} and code -32602 for invalid params on POST / and POST /a2a - standard reserved codes, standard envelope.'
+  caveat: HTTP status is 404 for -32601 and 400 for -32602 rather than 200; JSON-RPC over HTTP is not strict about this but some clients treat non-200 as transport failure (a2aregistry.org records the endpoint as "404").
+- id: mcp
+  name: Model Context Protocol - server published in the official registry
+  conforms: true
+  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=fetch-price lists io.github.fusionx212/fetch-price (schema 2025-12-11, status active); server source uses FastMCP over stdio. See mcp/fetch-price-com-mcp.yml for the package mismatch.
+- id: llms-txt
+  name: llms.txt (llmstxt.org)
+  conforms: true
+  evidence: https://fetch-price.com/llms.txt (200, text/plain) - H1, blockquote summary, H2 sections with markdown links, plus an "Optional" section; llms-full.txt also served. Saved to llms/.
+- id: agent-skills
+  name: Agent Skills (SKILL.md with name + description frontmatter)
+  conforms: true
+  evidence: https://raw.githubusercontent.com/fusionx212/fetch-price/master/SKILL.md - saved verbatim to skills/.
+- id: robots-txt-ai-crawlers
+  name: robots.txt with explicit AI crawler allowances
+  conforms: true
+  evidence: https://fetch-price.com/robots.txt allows all agents and names OAI-SearchBot, ChatGPT-User, GPTBot, Claude-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended, Bingbot explicitly; declares the sitemap.
+- id: schema-org-jsonld
+  name: schema.org JSON-LD (Organization + OfferCatalog + FAQPage)
+  conforms: true
+  evidence: Two application/ld+json blocks on https://fetch-price.com/ - an Organization with contactPoint contact@fetch-price.com and an OfferCatalog of the Free/Pro/Scale plans in GBP, and a FAQPage.
+  caveat: Site-level structured data, not a contract-level domain standard; recorded for discoverability, not as domain_standard_conformance.
+- id: cors
+  name: CORS (Fetch standard) on the API host
+  conforms: true
+  evidence: 'Observed on every api.fetch-price.com response: access-control-allow-origin *, access-control-allow-methods GET, POST, OPTIONS, access-control-allow-headers Content-Type, X-API-Key, Authorization.'
+- id: hsts
+  name: HTTP Strict Transport Security (RFC 6797)
+  conforms: true
+  evidence: 'api.fetch-price.com: strict-transport-security max-age=31536000; includeSubDomains. fetch-price.com: max-age=31536000. TLS 1.3 (security/fetch-price-com-domain-security.yml).'
+- id: rate-limit-headers
+  name: Rate-limit signalling headers
+  conforms: partial
+  evidence: 'X-RateLimit-Limit: 30 and X-RateLimit-Remaining observed on every response, counting down per request; documented in the docs with HTTP 429 on exhaustion. These are the legacy X- prefixed headers, not the IETF draft RateLimit/RateLimit-Policy fields; no Retry-After is documented.'
+- id: rfc9457
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: 'Observed error bodies are plain application/json {"error":"query required","results":[]} (400) and {"error":"not found"} (404); no application/problem+json, no type/title/status members.'
+- id: rfc9116
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: /.well-known/security.txt and /security.txt return 404 on fetch-price.com and api.fetch-price.com.
+- id: oauth2
+  name: OAuth 2.0 / 2.1
+  conforms: false
+  evidence: 'Static fp_ API key only (X-API-Key or Bearer), optional on the free tier. No authorization server, no /.well-known/oauth-authorization-server, no /.well-known/oauth-protected-resource (all 404).'
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: /.well-known/openid-configuration 404 on both hosts.
+- id: openapi
+  name: Provider-published OpenAPI / Swagger
+  conforms: false
+  evidence: openapi.json, openapi.yaml, swagger.json, /docs, /redoc, /api-docs, /v1/openapi.json all 404 on api.fetch-price.com; the same on fetch-price.com. The API is documented in HTML tables only. openapi/fetch-price-com-openapi.yml is API Evangelist-generated from those tables.
+- id: idempotency
+  name: Idempotency-Key (draft-ietf-httpapi-idempotency-key-header)
+  conforms: false
+  evidence: No idempotency mechanism documented; POST /api/query is a search and POST /api/agents/register has no replay protection described.
+- id: pagination
+  name: Cursor or offset pagination
+  conforms: false
+  evidence: Only max_results (1-20 per network) is offered; no page, cursor, offset or next link.
+- id: json-api
+  name: JSON:API
+  conforms: false
+  evidence: Plain JSON envelopes {results, meta} and {error, results}; no data/attributes/relationships, no application/vnd.api+json.
+domain_standard:
+  market: price comparison / affiliate commerce / marketplace search (UK)
+  declared: none
+  note: >-
+    No domain standard is declared in the contract surface. The market has candidate standards - schema.org
+    Product/Offer (present only as site-level Organization/OfferCatalog JSON-LD, not in API responses),
+    OpenRTB (advertising, not applicable), GS1/GTIN identifiers (results carry marketplace item_ids, no
+    GTIN/EAN), and the eBay Browse API shape upstream (not surfaced). Reward-only check; nothing is
+    asserted.
+compliance:
+  certifications: []
+  note: No SOC 2, ISO 27001, PCI DSS, Cyber Essentials or other certification is claimed anywhere public (home page, docs, privacy page, repo). Payments are delegated to Stripe payment links, so PCI scope stays with Stripe. No Compliance pointer is emitted.

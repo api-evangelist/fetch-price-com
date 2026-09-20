@@ -1,0 +1,59 @@
+generated: '2026-09-19'
+method: searched
+source: https://fetch-price.com/docs/ + live /health and /api/stats responses + https://fetch-price.com/privacy
+versioning:
+  scheme: semantic version string reported by the service; no URL or header versioning
+  mechanism: none - one unversioned base URL (https://api.fetch-price.com), no /v1 prefix, no version header
+  current: 1.3.0
+  observed:
+  - surface: GET /health
+    version: 1.3.0
+  - surface: agent card
+    version: 1.3.0
+  - surface: GET /api/stats
+    version: 1.2.0
+  - surface: docs page examples (captured 27 Jul 2026)
+    version: 1.1.0
+  - surface: npm / PyPI SDKs and MCP registry
+    version: 1.0.2
+  notes: >-
+    The service has moved 1.1.0 -> 1.3.0 since the docs were captured on 27 Jul 2026 with no changelog,
+    release notes or dated entries anywhere public (/changelog 404, no GitHub releases or tags, 0 stars,
+    last push 2026-09-02). Field additions visible across that window - result_type, item_id, image,
+    meta{} - are reflected in the docs but not dated. A consumer cannot learn what changed between
+    versions.
+deprecation:
+  policy_url: null
+  policy: none published
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations: []
+  notes: >-
+    No deprecation policy, no RFC 8594 Sunset/Deprecation headers, nothing marked deprecated. The
+    generated OpenAPI has no deprecated flags because the provider publishes none. The provider's own
+    SKILL.md still documents an older response shape ("Response is a JSON array") that the live API no
+    longer returns - an undocumented breaking change absorbed silently by the SDKs (the Python SDK reads
+    query_ms/results_count fields the current docs do not show).
+status_page:
+  url: null
+  health_endpoint: https://api.fetch-price.com/health
+  health_shape: '{"status":"ok","version":"1.3.0","networks":["ebay_uk","amazon_uk"],"ebay_live":true}'
+  probed:
+  - url: https://fetch-price.com/status
+    status: 404
+  - url: https://status.fetch-price.com/
+    status: NXDOMAIN
+  notes: >-
+    No status page, incident history or uptime commitment. llms.txt labels /health as "Status: live
+    service health" and the agent card exposes it as the service_status skill - a machine health probe
+    that reports upstream (eBay) reachability, which is more than most providers of this size publish,
+    but not a status page. No StatusPage pointer is emitted. a2aregistry.org reports 100% uptime and
+    ~2.3 s average response for the card host.
+sla:
+  url: null
+  public_uptime_target: null
+  support: contact@fetch-price.com (JSON-LD contactPoint; no support page, ticketing or response-time commitment)
+  notes: No SLA on any plan including Scale/Trade (GBP 99/mo). Terms of service do not exist (/terms and /tos 404); the privacy page is the only legal document and it states "Continued use after a change means you accept it."
+data_retention:
+  queries: raw search queries retained no longer than 30 days (privacy page)
+  account_deletion: by email; actioned within 30 days; removes key, contact details and usage records (privacy page)

@@ -1,0 +1,69 @@
+generated: '2026-09-19'
+method: searched
+source: https://fetch-price.com/docs/#get-key
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+  anonymous_access: true
+  note: 'Docs: "The free tier works without authentication (50 lookups/month). Register to get an fp_ key, higher
+    limits, and BYOK affiliate routing ... Send the key on every request as X-API-Key: fp_... (or Authorization:
+    Bearer fp_...)." One static credential, two carriers. No OAuth, no scopes, no key rotation endpoint. The key
+    is emailed to the registering address by Resend, is never displayed in a public response after issuance, and
+    is revoked by emailing the provider (privacy page). The stdio MCP server reads it from FETCH_PRICE_API_KEY and
+    sends it as Bearer; both SDKs read the same variable and send X-API-Key.'
+  transport: HTTPS only (HSTS on both hosts); header-borne; CORS allows X-API-Key and Authorization from any origin
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: fp_-prefixed key issued by POST /api/agents/register. Optional on the free tier (keyless requests
+    are counted per IP); required to use a registered agent's plan quota and BYOK routing. The first-party SDKs
+    send this header.
+  sources:
+  - https://fetch-price.com/docs/#get-key
+  - openapi/fetch-price-com-openapi.yml
+  required: false
+  used_by:
+  - npm fetch-price (js/index.js)
+  - PyPI fetch-price (python/fetch_price/__init__.py)
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: fp_-prefixed API key
+  description: The same key sent as Authorization Bearer, which is how the stdio MCP server and the provider's SKILL.md
+    send it.
+  sources:
+  - https://fetch-price.com/docs/#get-key
+  - openapi/fetch-price-com-openapi.yml
+  required: false
+  used_by:
+  - mcp/fetch_price_mcp.py (FETCH_PRICE_API_KEY)
+  - SKILL.md
+- name: anonymous
+  type: none
+  required: false
+  description: 'Free tier: no credential; 50 lookups/month and 30 requests/minute counted per IP. Observed 2026-09-19
+    - unauthenticated GET /health, GET /api/stats and POST /api/query all answered without a challenge.'
+  sources:
+  - https://fetch-price.com/docs/#quickstart
+docs: https://fetch-price.com/docs/#get-key
+spec: openapi/fetch-price-com-openapi.yml (API Evangelist-generated from the same docs)
+issuance:
+  operation: POST https://api.fetch-price.com/api/agents/register (operationId registerAgent)
+  required_fields:
+  - name
+  - owner
+  - networks
+  - endpoint
+  response: '{"agent_id":"agent-...","api_key":"fp_...","tier":"free","query_limit":50}'
+  delivery: returned once in the response and emailed to owner
+  rotation: none published
+  revocation: by email to the provider - "If you think a key is compromised, email us and we will revoke it."
+tiers:
+  keyless: free tier, quota counted per IP
+  keyed_free: free tier, quota per key
+  keyed_paid: Pro / Scale / Trade quotas + BYOK affiliate routing

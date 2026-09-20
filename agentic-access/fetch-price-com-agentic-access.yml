@@ -1,0 +1,72 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/fetch-price-com-openapi.yml, curated against https://fetch-price.com/docs/, the provider SKILL.md
+  and mcp/fetch_price_mcp.py
+description: Recommended x-agentic-access execution contracts, classified heuristically from the OpenAPI. A governance
+  starting point for exposing this API to AI agents — review and bind audience per deployment. See research/curity/agentic-governance/.
+summary:
+  operations: 4
+  by_action_class:
+    acting: 1
+    connected: 3
+  by_consequence:
+    write: 1
+    read: 3
+  human_in_the_loop_required: 0
+operations:
+- path: /api/query
+  method: post
+  operationId: queryProducts
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: required
+    audience: null
+    token:
+      max-ttl: 3600
+    escalation:
+      human-in-the-loop: none
+      triggers: []
+    audit: recommended
+    note: Spends one lookup of the plan quota per call; the only side effect. Results may contain affiliate-tracked
+      URLs the provider asks the agent to disclose to the human.
+- path: /api/agents/register
+  method: post
+  operationId: registerAgent
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /health
+  method: get
+  operationId: getHealth
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /api/stats
+  method: get
+  operationId: getStats
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+curation_note: 'Heuristic output reclassified queryProducts: it is a POST but semantically a read - a marketplace
+  search that persists nothing for the caller, places no order and moves no money (the buy URL is handed to a human).
+  The provider describes both agent-facing skills as search and a "read-only health check". registerAgent stays
+  acting/write (creates an account and a key). audience left null to bind per deployment.'

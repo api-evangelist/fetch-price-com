@@ -1,0 +1,63 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/fetch-price-com-openapi.yml (API Evangelist-generated from https://fetch-price.com/docs/) + first-party SDK dataclasses (python/fetch_price/__init__.py)
+note: >-
+  A deliberately small model - four endpoints, no resource ids beyond the marketplace's own. There are
+  no $ref chains to walk; the relationships below are those the docs and SDKs state.
+entities:
+- name: Agent
+  description: A registered API consumer (POST /api/agents/register). Identified by agent_id (prefix agent-); authenticated by api_key (prefix fp_).
+  fields: [agent_id, api_key, name, owner, endpoint, networks, commission_split, tier, query_limit]
+  id_prefix: agent-
+  key_prefix: fp_
+- name: Query
+  description: A single product search request (POST /api/query). Not persisted for the caller; logged server-side for <= 30 days.
+  fields: [query, max_results, max_price, min_price, currency, networks]
+- name: Result
+  description: One normalised marketplace listing returned by a Query.
+  fields: [product, price, currency, condition, network, result_type, item_id, image, url, seller_rating]
+  discriminator: result_type (item | search_link)
+  external_id: item_id (marketplace-native, e.g. eBay Browse API v1|<legacy item id>|0)
+- name: Network
+  description: A supported marketplace - ebay_uk (live, eBay Browse API + eBay Partner Network) or amazon_uk (rolling out, Amazon Associates).
+  fields: [id, live]
+  enum: [ebay_uk, amazon_uk]
+- name: Plan
+  description: Commercial tier - Free, Pro, Scale, Trade (plans/fetch-price-com-plans-pricing.yml). Sets query_limit and BYOK eligibility.
+  fields: [name, price, quota, byok]
+- name: Health
+  description: Service status snapshot (GET /health).
+  fields: [status, version, networks, ebay_live]
+- name: Stats
+  description: Public counters (GET /api/stats).
+  fields: [agents_active, networks_available, version]
+relationships:
+- from: Agent
+  to: Plan
+  type: belongs_to
+  via: tier
+- from: Agent
+  to: Network
+  type: has_many
+  via: networks (object keyed by network id, carrying campaign_id / tag for BYOK)
+- from: Query
+  to: Network
+  type: has_many
+  via: networks[]
+- from: Query
+  to: Result
+  type: has_many
+  via: results[] (per response; meta.returned counts them)
+- from: Result
+  to: Network
+  type: belongs_to
+  via: network
+- from: Result
+  to: Agent
+  type: attributed_to
+  via: the affiliate tracking on url - fetch-price's tag by default, the Agent's own campaign_id/tag under BYOK
+- from: Health
+  to: Network
+  type: has_many
+  via: networks[]; ebay_live flags ebay_uk reachability
+render: null

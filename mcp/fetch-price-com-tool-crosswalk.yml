@@ -1,0 +1,60 @@
+generated: '2026-09-19'
+method: derived
+source: mcp/fetch-price-com-mcp.yml + a2a/fetch-price-com-agent-card.json + openapi/fetch-price-com-openapi.yml
+note: >-
+  Binds each MCP tool AND each A2A skill to the REST operation that backs it. Confidence is high for
+  both bindings because the MCP server source literally POSTs {API_BASE}/api/query and GETs
+  {API_BASE}/health, and the A2A skill ids reuse the MCP tool names. The OpenAPI is API
+  Evangelist-generated from the provider's docs (x-generated-from: documentation), so the
+  operationIds are ours, not the provider's; the paths and fields are the provider's.
+surfaces:
+  openapi:
+    path: openapi/fetch-price-com-openapi.yml
+    provenance: generated from https://fetch-price.com/docs/ (provider publishes no OpenAPI)
+    operations: 4
+    gated: false
+  mcp:
+    manifest: mcp/fetch-price-com-mcp.yml
+    url: null
+    transport: stdio
+    gated: false
+    note: stdio only; tool schemas read from source, not from a live tools/list
+  a2a:
+    card: a2a/fetch-price-com-agent-card.json
+    endpoint: https://api.fetch-price.com/a2a
+    gated: false
+    skills: 2
+  graphql: null
+crosswalk:
+- tool: search_products
+  surfaces: [mcp, a2a]
+  category: read
+  rest: [queryProducts]
+  binding: 'POST /api/query - MCP forwards query, max_results (clamped 1-20), max_price, networks; A2A skill search_products accepts a text part and is described identically'
+  confidence: high
+  note: >-
+    The MCP tool strips two fields the REST response carries (result_type, item_id) and adds
+    seller_rating; an MCP caller therefore cannot distinguish an item from a search_link by field,
+    only by price 0. The REST/A2A description says every result declares result_type. Parameters
+    min_price and currency (sent by the SDKs) are not exposed by the tool.
+- tool: service_status
+  surfaces: [mcp, a2a]
+  category: read
+  rest: [getHealth]
+  binding: GET /health wrapped as {healthy, detail}
+  confidence: high
+mcp_only: []
+rest_only:
+- operation: registerAgent
+  path: POST /api/agents/register
+  reason: Account creation and key issuance - deliberately not exposed as a tool or skill; the MCP server reads its key from FETCH_PRICE_API_KEY.
+- operation: getStats
+  path: GET /api/stats
+  reason: Public counters; exposed by both SDKs (stats()) but not by the MCP server or the agent card.
+coverage:
+  mcp_tools: 2
+  a2a_skills: 2
+  tools_bound: 2
+  rest_operations: 4
+  rest_operations_bound: 2
+  rest_operations_unbound: 2

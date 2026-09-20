@@ -1,0 +1,160 @@
+generated: '2026-09-19'
+method: probed
+source: https://fetch-price.com/.well-known/agent-card.json
+card:
+  file: a2a/fetch-price-com-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: fetch-price.com
+  note: >-
+    The card is served at the A2A 1.0.0 canonical path AND the legacy /.well-known/agent.json on
+    fetch-price.com (byte-identical, 2,092 bytes), and again on the API host api.fetch-price.com at both
+    paths (same content, keys serialised in a different order, 1,866 bytes - saved as
+    well-known/fetch-price-com-agent-card-api-host.json). www.fetch-price.com 301s to the apex.
+    Ownership is not in question: provider.organization is POLICYANDPLAY LTD, provider.url is
+    https://fetch-price.com, the card's url is the API host the docs name as the base URL, the privacy
+    page names POLICYANDPLAY LTD (England & Wales, company number 17253846) as the operator, and the
+    npm/PyPI packages are published by the maintainer policyandplay. fetch-price is listed on
+    a2aregistry.org with this exact wellKnownURI, which is how it entered the harvest backlog.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://fetch-price.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  body_bytes: 2092
+  body_parses_as: JSON object with AgentCard shape (name, url, version, protocolVersion, capabilities, skills all present)
+  cache_headers: 'cache-control: public,max-age=0,must-revalidate; etag W/"1a0a35d1d8fe272a6c6412842556512b-ssl-df"; served via Netlify Edge behind Cloudflare'
+  corroborating_probes:
+  - url: https://fetch-price.com/.well-known/agent.json
+    http_status: 200
+    note: Legacy path; byte-identical to the canonical document.
+  - url: https://api.fetch-price.com/.well-known/agent-card.json
+    http_status: 200
+    note: Same card served from the API host (keys re-ordered).
+  - url: https://api.fetch-price.com/.well-known/agent.json
+    http_status: 200
+  - url: https://www.fetch-price.com/.well-known/agent-card.json
+    http_status: 301
+    note: Redirects to the apex.
+  - url: https://api.fetch-price.com/
+    method: GET
+    http_status: 200
+    body: '{"a2a":"POST / or /a2a (JSON-RPC 2.0, message/send)","agent_card":"/.well-known/agent-card.json","docs":"https://fetch-price.com/docs","health":"/health","query":"POST /api/query","service":"fetch-price API"}'
+    note: The API root self-describes the A2A binding - JSON-RPC 2.0 at POST / or POST /a2a.
+  - url: https://api.fetch-price.com/a2a
+    method: POST message/send with empty params
+    http_status: 400
+    body: '{"error":{"code":-32602,"message":"No text part supplied"},"id":2,"jsonrpc":"2.0"}'
+    note: message/send EXISTS and validates its params (JSON-RPC -32602 Invalid params). No search was run - the request deliberately carried no message so it could not consume a lookup.
+  - url: https://api.fetch-price.com/a2a
+    method: POST tasks/get
+    http_status: 404
+    body: '{"error":{"code":-32601,"message":"Method not found: tasks/get"},"id":3,"jsonrpc":"2.0"}'
+    note: tasks/get is not implemented; the server signals an unknown JSON-RPC method with HTTP 404 plus -32601.
+  - url: https://api.fetch-price.com/
+    method: POST agent/getAuthenticatedExtendedCard
+    http_status: 404
+    body: '{"error":{"code":-32601,"message":"Method not found: agent/getAuthenticatedExtendedCard"},"id":1,"jsonrpc":"2.0"}'
+    note: No extended card; the card does not claim one (supportsAuthenticatedExtendedCard absent).
+agent_card:
+  name: fetch-price
+  description: UK product and price search for AI agents. eBay UK is live via the official Browse API; Amazon UK is rolling out. Purchase links are affiliate-tracked.
+  version: 1.3.0
+  protocol_version: 1.0.0
+  url: https://api.fetch-price.com
+  preferred_transport: JSONRPC
+  documentation_url: https://fetch-price.com/docs
+  documentation_url_status: 301 -> https://fetch-price.com/docs/ (200, public HTML reference)
+  privacy_policy_url: https://fetch-price.com/privacy
+  privacy_policy_url_status: 200
+  provider:
+    organization: POLICYANDPLAY LTD
+    url: https://fetch-price.com
+  capabilities:
+    streaming: false
+    push_notifications: false
+  default_input_modes:
+  - application/json
+  - text/plain
+  default_output_modes:
+  - application/json
+  security_schemes: none declared
+  security: none declared
+  skill_count: 2
+  skills:
+  - id: search_products
+    name: UK product search
+    tags: [shopping, prices, uk, ecommerce, price-comparison, ebay, deals]
+    examples: 4
+    backing_rest: POST /api/query (operationId queryProducts in openapi/fetch-price-com-openapi.yml)
+  - id: service_status
+    name: Service health check
+    tags: [health, status]
+    examples: 1
+    backing_rest: GET /health (operationId getHealth)
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: 1.0.0
+  preferred_transport: JSONRPC
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    preferred_transport: true
+    default_input_modes: true
+    default_output_modes: true
+  grade_basis: >-
+    All three hard checks pass: capabilities is an OBJECT ({streaming:false, pushNotifications:false}),
+    protocolVersion is present at the top level ("1.0.0"), and skills is an ARRAY of two fully-formed
+    skills (id, name, description, tags, examples). All three optional discriminators are present
+    (preferredTransport JSONRPC, defaultInputModes, defaultOutputModes). The card uses the 0.3-era
+    top-level url/preferredTransport/protocolVersion triple rather than 1.0.0's supportedInterfaces[],
+    which the grading rubric does not penalise; noted under deviations because a strict 1.0.0 reader
+    looking only at supportedInterfaces[] would find no interface.
+  deviations:
+  - field: supportedInterfaces
+    observed: absent (url + preferredTransport at the top level instead)
+    note: The 0.3-style shape. A2A 1.0.0 carries the binding on supportedInterfaces[].protocolBinding; the card declares protocolVersion 1.0.0 but the older field layout. Functionally unambiguous - one JSONRPC interface at https://api.fetch-price.com.
+  - field: securitySchemes / security
+    observed: absent
+    note: The card declares no authentication. That is consistent with the REST surface (the free tier is keyless, counted per IP) and the endpoint answered anonymous JSON-RPC without a challenge, so this is an accurate description rather than an omission - but a paying agent has no card-level way to learn that an fp_ key can be sent as X-API-Key or Bearer.
+  - field: url
+    observed: https://api.fetch-price.com (host root)
+    note: The API root states the A2A binding is POST / or POST /a2a. Unknown JSON-RPC methods return HTTP 404 with -32601, which is why a2aregistry.org's task-conformance smoke test records "404" - message/send itself answers (-32602 on an empty message).
+  - field: skills[].inputModes / outputModes
+    observed: absent (defaults apply)
+    note: Optional; the registry normalises them to empty arrays.
+  - field: version drift
+    observed: card version 1.3.0; /health reports 1.3.0; /api/stats reports 1.2.0; the docs page examples still show 1.1.0
+    note: Cosmetic, but an agent reconciling versions across surfaces will see three numbers.
+registry:
+  a2aregistry_org:
+    id: 2447e032-d557-4f7b-80e3-ebb21b41cd4b
+    url: https://a2aregistry.org/api/agents?search=fetch-price
+    fetched: '2026-09-19'
+    created_at: '2026-07-27T15:35:40Z'
+    conformance: true
+    is_healthy: true
+    uptime_percentage: 100.0
+    task_conformance_passed: false
+    task_conformance_category: '404'
+    maintainer_notes: Agent card is valid but the A2A endpoint returns 404 Not Found when sending messages. The message/send endpoint does not exist at the URL declared in the agent card.
+    api_evangelist_reading: >-
+      Our own probe contradicts the maintainer note: POST https://api.fetch-price.com/a2a with
+      {"method":"message/send","params":{}} returned HTTP 400 and JSON-RPC -32602 "No text part supplied",
+      which is a live message/send handler validating its input. The server DOES return HTTP 404 for
+      unknown methods (tasks/get, agent/getAuthenticatedExtendedCard) and possibly for whatever shape the
+      registry's smoke test posts, which is the likeliest source of the 404 category. Recorded, not
+      resolved - a full message/send would consume a free-tier lookup and run a live marketplace search,
+      which this pipeline does not do.
+surface_relationship:
+  note: >-
+    fetch-price publishes FOUR agent-facing surfaces over ONE REST API. A2A: this card plus a JSON-RPC
+    message/send binding on api.fetch-price.com (root or /a2a). MCP: a one-file stdio server in the
+    public GitHub repo, listed in the official MCP registry (mcp/fetch-price-com-mcp.yml) - no hosted
+    MCP endpoint. Agent Skill: a SKILL.md in the same repo (skills/). llms.txt + llms-full.txt on the
+    apex. Both A2A skills map one-to-one onto REST operations: search_products -> POST /api/query,
+    service_status -> GET /health (mcp/fetch-price-com-tool-crosswalk.yml).

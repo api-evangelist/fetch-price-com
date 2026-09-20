@@ -1,0 +1,71 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+operator: POLICYANDPLAY LTD, registered in England & Wales, company number 17253846 (privacy page)
+signals:
+  data_subject_request:
+    present: true
+    url: https://fetch-price.com/privacy
+    regime_named: UK GDPR
+    channel: email (the address is Cloudflare-obfuscated on the page; the home-page JSON-LD contactPoint is contact@fetch-price.com)
+    rights_stated: access (copy of what is held), rectification, erasure
+    stated_sla: we will action it within 30 days
+    verbatim: '"Under UK GDPR you can ask us for a copy of what we hold about you, correct it, or have it deleted. Email ... and we will action it within 30 days. Deleting an account removes its key, contact details and usage records; anonymous aggregate counts may remain."'
+    note: Substance present - named regime, enumerated rights, a channel and a stated response period - inside the privacy policy rather than on a dedicated /privacy/requests page (404).
+  subprocessors:
+    present: true
+    url: https://fetch-price.com/privacy
+    form: enumerated list with purpose per processor, inside the privacy policy (no standalone page; /legal/subprocessors 404)
+    dated: 'Last updated 27 July 2026'
+    processors:
+    - name: eBay
+      purpose: receives the search terms needed to run your query, under their own privacy policy
+    - name: Stripe
+      purpose: handles all payments; card details never seen or stored by the provider
+    - name: Cloudflare
+      purpose: routes traffic to the API and provides abuse protection
+    - name: Resend
+      purpose: delivers account emails such as your API key
+    exhaustiveness_claim: '"No other third parties. The service runs on infrastructure we operate directly."'
+    note: Recorded because the page names each processor with its purpose, carries a date and claims completeness. It is not a change-notified subscription list.
+probed:
+- url: https://fetch-price.com/privacy
+  status: 200
+  note: The only legal page. Also states retention (raw queries <= 30 days), no sale of data, no model training on queries, no advertising/tracking cookies, no attempt to identify end users behind an agent, and an API-key compromise/revocation channel by email.
+- url: https://fetch-price.com/accessibility
+  status: 404
+- url: https://fetch-price.com/legal/subprocessors
+  status: 404
+- url: https://fetch-price.com/legal/dpa
+  status: 404
+- url: https://fetch-price.com/security
+  status: 404
+- url: https://fetch-price.com/terms
+  status: 404
+- url: https://fetch-price.com/.well-known/security.txt
+  status: 404
+- url: https://api.fetch-price.com/.well-known/security.txt
+  status: 404
+- url: https://fetch-price.com/changelog
+  status: 404
+not_found:
+- sbom
+- support_lifetime
+- accessibility_conformance
+- training_data_summary
+- ai_transparency
+- global_privacy_control
+- data_residency
+- incident_notification
+- age_assurance
+- notice_and_action
+- transparency_report
+- exit_assistance
+note: >-
+  HARVEST ONLY. Two signals carry real substance and are recorded with the exact page; the other twelve
+  are absent from every public surface (home page, docs, privacy page, repo, llms.txt). Relevant
+  statements that do NOT rise to a tracked signal, kept here so they are not lost: "We do not use your
+  queries to train models" (a no-training commitment, not a training-data summary); the affiliate
+  disclosure the provider asks agents to pass on to humans (consumer-protection / advertising disclosure,
+  not one of the fourteen); "infrastructure we operate directly" with no location stated (not a
+  data-residency statement). Which regimes reach the provider is decided by the regime map, not here.

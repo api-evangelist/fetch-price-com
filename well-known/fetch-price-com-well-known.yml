@@ -1,0 +1,108 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* path list on fetch-price.com, www.fetch-price.com and
+  api.fetch-price.com (the only API host the provider publishes; there is no hosted MCP host - the MCP
+  server is stdio-only), 2026-09-19. Every row is a request that was issued; every status is the one
+  returned.
+summary:
+  hosts_probed: 3
+  paths_probed: 26
+  documents_served: 4
+  note: >-
+    The only /.well-known document this provider serves is the A2A agent card, and it serves it four
+    times: canonical and legacy paths on both the apex and the API host. Nothing else - no security.txt,
+    openid-configuration, oauth-authorization-server, oauth-protected-resource, api-catalog, ai-plugin.json
+    or mcp.json - exists on any host. The apex 404s with a real 3,449-byte HTML 404 page (a genuine
+    not-found, not an SPA shell: the same body for /nonexistent-page-xyz); the API host 404s with
+    {"error":"not found"} application/json. www 301s every path to the apex. The absence of
+    oauth-protected-resource is consistent with the auth model: the API takes an optional static fp_ key
+    and runs no OAuth, so RFC 9728 has nothing to describe.
+hosts:
+- host: fetch-price.com
+  role: Marketing apex + docs host (Netlify behind Cloudflare) - serves the agent card, llms.txt, llms-full.txt, robots.txt and sitemap.xml
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/fetch-price-com-agent-card.json
+    standard: A2A 1.0.0
+    note: Captured verbatim and graded in a2a/fetch-price-com-a2a.yml (conformant).
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/fetch-price-com-agent-card.json
+    standard: A2A (pre-0.3 legacy path)
+    note: Byte-identical to the canonical document.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /security.txt
+    status: 404
+    note: Legacy root location, also absent.
+- host: api.fetch-price.com
+  role: API host (Cloudflare-fronted) - REST base URL and the A2A JSON-RPC endpoint
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: fetch-price-com-agent-card-api-host.json
+    standard: A2A 1.0.0
+    note: Same card as the apex with keys serialised alphabetically (1,866 bytes). Saved verbatim.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json
+    file: fetch-price-com-agent-card-api-host.json
+    standard: A2A (pre-0.3 legacy path)
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+- host: www.fetch-price.com
+  role: Alias - every path 301s to https://fetch-price.com/
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 301
+    note: Location https://fetch-price.com/.well-known/agent-card.json
+  - path: /.well-known/security.txt
+    status: 301
+    note: Location https://fetch-price.com/.well-known/security.txt (which is 404)
+  - path: /
+    status: 301
+    note: Location https://fetch-price.com/
+adjacent_machine_readable_surfaces:
+  note: Not /.well-known paths, but published for machines and indexed here so the discovery picture is complete.
+  surfaces:
+    - url: https://fetch-price.com/llms.txt
+      status: 200
+      file: ../llms/fetch-price-com-llms.txt
+    - url: https://fetch-price.com/llms-full.txt
+      status: 200
+      file: ../llms/fetch-price-com-llms-full.txt (gitignored; 7,934 bytes; llms.txt plus a text dump of the docs page)
+    - url: https://fetch-price.com/robots.txt
+      status: 200
+      note: 'Allow: / for all agents; explicitly welcomes OAI-SearchBot, ChatGPT-User, GPTBot, Claude-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended, Bingbot; comments point at llms.txt, llms-full.txt and the agent card.'
+    - url: https://fetch-price.com/sitemap.xml
+      status: 200
+      note: Lists the apex, /docs/, the agent card, llms.txt and four API-host URLs (/, /api/stats, /api/query, /api/agents/register) with lastmod 2026-07-26/27.

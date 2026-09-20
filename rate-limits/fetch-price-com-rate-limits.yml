@@ -1,0 +1,74 @@
+generated: '2026-09-19'
+method: probed
+source: https://fetch-price.com/docs/#limits
+docs: https://fetch-price.com/docs/#limits
+limit_count: 5
+summary: >-
+  One published request-rate limit and four plan quotas. Docs: "30 requests/minute per key (or per IP
+  when keyless). Every response carries X-RateLimit-Limit and X-RateLimit-Remaining headers; excess
+  requests get HTTP 429. Monthly lookup quotas are per plan." Both headers were OBSERVED live on
+  2026-09-19 on every api.fetch-price.com response, including 400s and 404s: X-RateLimit-Limit 30,
+  X-RateLimit-Remaining counting down 30 -> 29 -> 27 across consecutive unauthenticated requests from
+  one IP. No 429 was provoked.
+rate_limits:
+- id: per-minute
+  scope: per-key (per-IP when no key is sent)
+  window: 1 minute
+  limit: 30
+  burst: null
+  applies_to: all endpoints on https://api.fetch-price.com (headers seen on /, /health, /api/stats, /api/query, /a2a)
+  source: docs + observed headers
+- id: quota-free
+  scope: per-key or per-IP
+  window: 1 month
+  limit: 50 lookups (POST /api/query)
+  plan: Free
+  source: docs
+- id: quota-pro
+  scope: per-key
+  window: 1 month
+  limit: 5000 lookups
+  plan: Pro (GBP 29/mo)
+  source: docs
+- id: quota-scale
+  scope: per-key
+  window: 1 month
+  limit: unlimited
+  plan: Scale (GBP 99/mo)
+  source: docs
+- id: quota-trade
+  scope: per-key
+  window: 1 month
+  limit: unlimited
+  plan: Trade (GBP 99/mo)
+  source: docs
+signaling:
+  scope: per-key / per-IP
+  exhaustion_status: 429
+  response_headers:
+  - name: X-RateLimit-Limit
+    documented: true
+    observed: true
+    observed_value: '30'
+  - name: X-RateLimit-Remaining
+    documented: true
+    observed: true
+    observed_value: '30, 29, 27 on successive requests'
+  - name: X-RateLimit-Reset
+    documented: false
+    observed: false
+  - name: Retry-After
+    documented: false
+    observed: false
+  - name: RateLimit / RateLimit-Policy (IETF draft)
+    documented: false
+    observed: false
+  client_guidance: >-
+    Read X-RateLimit-Remaining on every response and pause before it reaches 0; on 429 wait for the
+    next minute window (no reset time is signalled). A 429 can also mean the monthly quota is spent - the
+    provider's MCP server surfaces that as "rate limit reached on current tier - see
+    fetch-price.com/pricing"; the two causes are not distinguishable from the response.
+  quota_visibility: >-
+    No endpoint or header reports remaining monthly lookups; registration returns query_limit once.
+domains:
+- api.fetch-price.com

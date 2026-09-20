@@ -1,0 +1,109 @@
+generated: '2026-09-19'
+method: searched
+source: https://fetch-price.com/docs/
+derived_from: openapi/fetch-price-com-openapi.yml (API Evangelist-generated from the same docs)
+docs:
+- https://fetch-price.com/docs/
+- https://fetch-price.com/llms.txt
+- https://fetch-price.com/privacy
+- https://github.com/fusionx212/fetch-price
+base_url: https://api.fetch-price.com
+media_type: application/json (request and response); JSON-RPC 2.0 for the A2A binding at / and /a2a
+surface_note: >-
+  Four REST endpoints on one unversioned host, documented in HTML tables; no OpenAPI. Everything below
+  is what the docs, the first-party SDK/MCP sources and live unauthenticated responses (2026-09-19)
+  show. Where nothing is published the value is an honest none/undocumented, not a guess.
+auth:
+  style: optional static API key - X-API-Key header (SDKs) or Authorization Bearer (MCP server, SKILL.md); fp_ prefix; issued by POST /api/agents/register and emailed to the owner
+  anonymous_access: yes - the free tier (50 lookups/month, 30 req/min) needs no key and is counted per IP
+  detail: authentication/fetch-price-com-authentication.yml
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  header: null
+  scope: []
+  retention: undocumented
+  description: >-
+    No Idempotency-Key or equivalent is documented on either write-shaped operation. POST /api/query is
+    semantically a read (a search) - repeating it is safe apart from spending one lookup of quota per
+    call. POST /api/agents/register creates an agent and issues a key; nothing describes what a second
+    identical registration does (a duplicate agent, an error, or the same key back), and there is no
+    client-supplied key to make it safe to retry after a timeout.
+dry_run_mode:
+  supported: false
+  grade: none
+  description: No dry-run, preview, validate or sandbox mode for registration; searches are live against eBay. Free-tier lookups are the de-facto rehearsal path.
+reversibility:
+  grade: documented
+  write_surfaces:
+  - surface: registerAgent (POST /api/agents/register)
+    effect: creates an agent record and an API key; stores name, contact email, endpoint and affiliate identifiers
+    reversal: out-of-band - "Deleting an account removes its key, contact details and usage records; anonymous aggregate counts may remain." Request by email; also "If you think a key is compromised, email us and we will revoke it."
+    reversal_operation: none in the API (no DELETE /api/agents/{id}, no key rotation endpoint)
+    window: 'stated processing period: "we will action it within 30 days" (a response SLA for the request, not a time limit after which deletion is refused)'
+    docs: https://fetch-price.com/privacy
+  - surface: queryProducts (POST /api/query)
+    effect: none persisted for the caller beyond a quota decrement and a server-side query log (raw queries retained <= 30 days); the API places no orders and moves no money
+    reversal: not applicable - a purchase, if any, happens later on the marketplace via the returned url, under eBay's or Amazon's own returns policy
+    window: null
+  - surface: paid plan subscription (Stripe payment links)
+    effect: recurring GBP 29 or GBP 99 monthly charge
+    reversal: undocumented on fetch-price's surfaces (no terms page, no cancellation policy); Stripe-hosted subscription management is not linked
+    window: undocumented
+  description: >-
+    Graded documented (0.4), not verified: a reversal path for the one persistent write (account/key
+    creation) IS published with a stated 30-day action period, but it is an email request rather than an
+    API operation and the 30 days is a service commitment, not a reversal window in the
+    cancel-before-capture sense. The API itself is read-only in effect: an agent calling it can spend
+    quota and surface links, never commit its human to a purchase.
+pagination:
+  style: none
+  params: max_results (1-20, default 5, "items per network")
+  response_fields: meta.returned; no cursor, page, offset, total or next link
+  description: One page only; larger result sets are not retrievable.
+filtering:
+  params: max_price (GBP, applied upstream), networks (ebay_uk, amazon_uk), plus min_price and currency sent by the SDKs but absent from the docs table
+  sorting: none - results return in the marketplace's own order; the provider states commission never influences ranking
+field_expansion:
+  supported: false
+sparse_fields:
+  supported: false
+metadata:
+  supported: false
+request_id:
+  header: none documented or observed (Cloudflare cf-ray is present on responses as an edge trace id only)
+versioning:
+  scheme: none in the URL or headers; a semver string is reported by GET /health and GET /api/stats (1.3.0 / 1.2.0)
+  detail: lifecycle/fetch-price-com-lifecycle.yml
+errors:
+  envelope: '{"error": "<message>", "results": []} on /api/query; {"error": "<message>"} elsewhere; JSON-RPC 2.0 error objects on the A2A binding'
+  format: plain JSON, not RFC 9457
+  detail: errors/fetch-price-com-problem-types.yml
+rate_limits:
+  signal: X-RateLimit-Limit and X-RateLimit-Remaining on every response (observed); 429 on exhaustion; no Retry-After or reset header
+  limit: 30 requests/minute per key or per IP; monthly lookup quota per plan
+  detail: rate-limits/fetch-price-com-rate-limits.yml
+result_typing:
+  field: result_type
+  values: [item, search_link]
+  rule: 'Provider-stated contract: "the API never dresses a search page up as a product" - a search_link is a tracked marketplace search URL with price 0, served for networks not yet live or when an upstream API is briefly unavailable. Never present one to a user as a product.'
+  caveat: The provider's own MCP server drops this field when normalising results, leaving price 0 as the only tell.
+affiliate_disclosure:
+  rule: Purchase links are affiliate-tracked; commission does not affect ranking; agents surfacing results to a person are asked to pass the disclosure on.
+  docs: https://fetch-price.com/privacy
+cors:
+  allow_origin: '*'
+  allow_methods: GET, POST, OPTIONS
+  allow_headers: Content-Type, X-API-Key, Authorization
+  note: Browser-callable directly from a page, which is unusual for a keyed API; observed on every response.
+caching:
+  response: cache-control no-store on the API host
+transport_security:
+  hsts: max-age=31536000; includeSubDomains (API host)
+  headers_observed: x-content-type-options nosniff, x-frame-options DENY
+events:
+  webhooks: none
+  streaming: '"REST + WebSocket" is listed for the Scale plan on the pricing table but no WebSocket endpoint, protocol or message format is documented; the agent card declares streaming false and pushNotifications false. No event surface is recorded.'
+input_hygiene:
+  note: The MCP server (not the API docs) rejects queries over 200 chars and prompt-injection-shaped strings ("ignore previous instructions", "system:", "you are now", "new instructions:", "override system prompt") client-side before calling the API; the API itself documents only the 200-char limit.

@@ -1,0 +1,78 @@
+generated: '2026-09-19'
+method: searched
+source: https://fetch-price.com/docs/#pricing
+docs: https://fetch-price.com/
+plan_count: 4
+currency: GBP
+model: >-
+  Freemium with a fixed free tier and flat monthly subscriptions bought through Stripe payment links.
+  The provider states the model plainly on the docs page: "either we earn the commission, or you pay
+  for the calls" - free-tier and untagged requests return links carrying fetch-price's own affiliate
+  tracking; paid plans can route commission to the customer's own eBay Partner Network account (BYOK).
+  No per-call overage is published; the metered unit is a "lookup" (one POST /api/query) per calendar
+  month.
+plans:
+- id: free
+  name: Free
+  price: 0
+  currency: GBP
+  period: month
+  quota: 50 lookups/month
+  access: REST, all networks
+  auth: none required (per-IP quota) or a registered fp_ key on the free tier
+  overage: null
+  limits:
+  - 30 requests/minute per key or per IP
+  - 50 lookups/month
+  - links carry fetch-price's own affiliate tracking (no BYOK)
+  signup: POST https://api.fetch-price.com/api/agents/register (docs https://fetch-price.com/docs/#get-key)
+  note: '"No key needed on the free tier." Home page: "Free to start. No credit card."'
+- id: pro
+  name: Pro
+  price: 29
+  currency: GBP
+  period: month
+  quota: 5,000 lookups/month
+  access: REST, priority routing, BYOK affiliate tags
+  overage: null
+  limits:
+  - 30 requests/minute per key
+  - 5,000 lookups/month
+  checkout: https://buy.stripe.com/7sY6oH5Yhasp86u5t5cbC1g
+  note: JSON-LD on the home page describes Pro as "5000 lookups/month + priority routing".
+- id: scale
+  name: Scale
+  price: 99
+  currency: GBP
+  period: month
+  quota: unlimited lookups
+  access: REST + WebSocket, first priority, BYOK
+  overage: null
+  limits:
+  - 30 requests/minute per key (the docs state the per-minute limit applies to every key; no higher ceiling is published for Scale)
+  checkout: https://buy.stripe.com/8x23cvaex585dqOdZBcbC1h
+  note: >-
+    "REST + WebSocket" is stated on the pricing tables but no WebSocket endpoint, protocol or message
+    format is documented anywhere public, so it is recorded as a plan claim, not an event surface.
+    JSON-LD describes Scale as "Unlimited + API access + white-label"; the docs table does not mention
+    white-label.
+- id: trade
+  name: Trade
+  price: 99
+  currency: GBP
+  period: month
+  quota: unlimited lookups
+  access: REST + CSV export + "distressed inventory" network
+  overage: null
+  limits:
+  - 30 requests/minute per key
+  checkout: contact (mailto on the docs page; no payment link)
+  note: Not in the home-page JSON-LD offer catalog; appears only in the two HTML pricing tables. "Distressed" is listed as an additional network for this tier but is not one of the two API network ids (ebay_uk, amazon_uk).
+probed:
+- url: https://fetch-price.com/pricing
+  status: 301
+  note: Redirects to https://fetch-price.com/docs/#pricing
+- url: https://fetch-price.com/docs/
+  status: 200
+- url: https://fetch-price.com/
+  status: 200

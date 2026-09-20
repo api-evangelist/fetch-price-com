@@ -1,0 +1,138 @@
+generated: '2026-09-19'
+method: searched
+status: published
+source: https://github.com/fusionx212/fetch-price/blob/master/mcp/fetch_price_mcp.py
+docs: https://fetch-price.com/docs/#mcp
+registry: https://registry.modelcontextprotocol.io/v0/servers?search=fetch-price
+summary: >-
+  fetch-price ships ONE official MCP server and it is stdio-only: a single Python file
+  (mcp/fetch_price_mcp.py, FastMCP, MIT) in the public GitHub repo, documented on the API reference
+  page and listed in the official MCP registry as io.github.fusionx212/fetch-price (status active,
+  published 2026-07-27). There is NO hosted/remote MCP endpoint: https://api.fetch-price.com/mcp and
+  https://fetch-price.com/mcp both 404, and neither host serves /.well-known/mcp.json. The server is
+  a thin wrapper over the REST API (POST /api/query, GET /health) with an optional FETCH_PRICE_API_KEY.
+deployment:
+  mode: local-stdio
+  endpoint: null
+  install: claude mcp add fetch-price -- python fetch-price/mcp/fetch_price_mcp.py
+  package: https://github.com/fusionx212/fetch-price
+  auth: api-key
+  auth_required: false
+  verified: searched
+  note: >-
+    Verbatim install recipe from https://fetch-price.com/docs/#mcp, preceded by
+    "git clone https://github.com/fusionx212/fetch-price" and "pip install \"mcp[cli]\" httpx".
+    auth is api-key because the server forwards FETCH_PRICE_API_KEY as a Bearer token when set, and
+    auth_required is false because the free tier (50 lookups/month, counted per IP) works with no key -
+    the source says "optional - required once past the free tier". verified is searched: the source
+    file and the registry record were read; the server was not executed by API Evangelist.
+    PACKAGE CAVEAT: the MCP registry record and the repo's server.json declare npm fetch-price 1.0.2
+    and PyPI fetch-price 1.0.1 as stdio packages, but neither published package contains the server -
+    the npm tarball is index.js + package.json + README (no bin), and the PyPI wheel is the
+    fetch_price SDK module with no console entry point. `npx -y fetch-price` or `uvx fetch-price`
+    will NOT start an MCP server; only the cloned repo file does. The docs say as much: "PyPI/npm
+    packages are being published - until then, install from the repo."
+servers:
+- id: fetch-price
+  name: fetch-price
+  transport: stdio
+  endpoint: null
+  runtime: python3 (FastMCP from mcp[cli]; httpx)
+  source_file: https://raw.githubusercontent.com/fusionx212/fetch-price/master/mcp/fetch_price_mcp.py
+  license: MIT
+  instructions: >-
+    UK product and price search across major marketplaces. Use search_products when a user wants to
+    find, compare, or price a physical product available in the UK. Results include live prices,
+    condition, and a direct purchase URL to hand back to the user.
+  env:
+  - name: FETCH_PRICE_API_BASE
+    default: https://api.fetch-price.com
+  - name: FETCH_PRICE_API_KEY
+    default: ''
+    note: optional - required once past the free tier; sent as Authorization Bearer
+  upstream_api: https://api.fetch-price.com
+  status: published
+  tools:
+  - name: search_products
+    description: Search live UK marketplace listings for a product.
+    source_operation: openapi/fetch-price-com-openapi.yml#queryProducts
+    inputSchema:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          description: What to search for, in plain language (e.g. "portable air conditioner 9000 BTU"). Max 200 chars; the server rejects prompt-injection-shaped strings ("ignore previous instructions", "system:", "you are now", "new instructions:", "override system prompt") with error "Invalid query".
+        max_results:
+          type: integer
+          default: 5
+          description: How many results to return, clamped to 1-20.
+        max_price:
+          type: number
+          description: Optional ceiling in GBP; listings above this are excluded.
+        networks:
+          type: array
+          items:
+            type: string
+            enum: [ebay_uk, amazon_uk]
+          description: Which marketplaces to search. Defaults to all available; unknown values are dropped and an all-invalid list returns an error.
+    output: >-
+      {results: [{product, price, currency, condition, network, url, image, seller_rating}], meta:
+      {query, networks_searched, returned}} - the server re-normalises each upstream item (drops
+      result_type and item_id, adds seller_rating). Errors are returned IN-BAND as {error, results: []}
+      rather than as MCP tool errors: empty query, invalid query, no valid networks, timeout, network
+      error, HTTP 401 (unauthorised - set FETCH_PRICE_API_KEY or register), HTTP 429 (rate limit reached
+      on current tier), other non-200, non-JSON body.
+    schema_source: read from the @mcp.tool() function signature and docstring in fetch_price_mcp.py (FastMCP derives inputSchema from the signature) - not observed via tools/list
+  - name: service_status
+    description: Check whether the fetch-price API is reachable and healthy. Useful before a batch of searches, or to diagnose empty results.
+    source_operation: openapi/fetch-price-com-openapi.yml#getHealth
+    inputSchema:
+      type: object
+      properties: {}
+    output: '{healthy: bool, detail: <health payload or "HTTP <code>" or exception text>}'
+    schema_source: read from the function signature in fetch_price_mcp.py
+  tool_count: 2
+  crosswalk: mcp/fetch-price-com-tool-crosswalk.yml
+client_configs:
+  claude_code: claude mcp add fetch-price -- python fetch-price/mcp/fetch_price_mcp.py
+  generic_stdio: python fetch_price_mcp.py
+  note: The docs name Claude Code, Claude Desktop, Cursor and "any MCP-capable client" as targets but publish a config snippet only for Claude Code.
+mcp_registry:
+  name: io.github.fusionx212/fetch-price
+  title: fetch-price
+  version: 1.0.2
+  schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+  status: active
+  published_at: '2026-07-27T15:50:25Z'
+  website_url: https://fetch-price.com
+  repository: https://github.com/fusionx212/fetch-price
+  packages_declared:
+  - registryType: npm
+    identifier: fetch-price
+    version: 1.0.2
+    transport: stdio
+    actually_contains_server: false
+  - registryType: pypi
+    identifier: fetch-price
+    version: 1.0.1
+    transport: stdio
+    actually_contains_server: false
+  server_json_in_repo: https://raw.githubusercontent.com/fusionx212/fetch-price/master/server.json
+x-evidence:
+  fetched: '2026-09-19'
+  docs_url: https://fetch-price.com/docs/
+  docs_http_status: 200
+  source_http_status: 200
+  registry_http_status: 200
+  hosted_endpoint_probes:
+  - url: https://api.fetch-price.com/mcp
+    method: POST tools/list
+    http_status: 404
+    body: '{"error":"not found"}'
+  - url: https://fetch-price.com/mcp
+    http_status: 404
+  - url: https://api.fetch-price.com/.well-known/mcp.json
+    http_status: 404
+  - url: https://fetch-price.com/.well-known/mcp.json
+    http_status: 404

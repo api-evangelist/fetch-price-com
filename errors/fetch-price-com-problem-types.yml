@@ -1,0 +1,88 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live unauthenticated requests to https://api.fetch-price.com on 2026-09-19 (POST /api/query with an
+  empty body, GET /api/query, GET /openapi.json and other unknown paths, JSON-RPC POSTs to / and /a2a),
+  plus the documented 401/429 behaviour in https://fetch-price.com/docs/ and the status-code handling
+  in the first-party MCP server source.
+docs: https://fetch-price.com/docs/#limits
+format: plain-json
+envelope:
+  rest:
+    media_type: application/json
+    shape: '{"error": "<human-readable message>", "results": []}  (results present on /api/query; other paths return {"error": "..."} alone)'
+    note: Not RFC 9457. No machine-readable code, no type URI, no request id. The message string is the only discriminator.
+  a2a:
+    media_type: application/json
+    shape: JSON-RPC 2.0 error object {jsonrpc, id, error:{code, message}}; HTTP status mirrors the class (404 for -32601, 400 for -32602)
+consistency_gap: >-
+  No error reference is published; the docs mention only "excess requests get HTTP 429". The REST
+  envelope is consistent (always an error string) but carries no stable code, so clients - including
+  the provider's own MCP server - branch on HTTP status alone. The A2A surface uses standard JSON-RPC
+  codes but pairs them with non-200 HTTP statuses, which some JSON-RPC clients and a2aregistry.org's
+  smoke test read as a transport failure.
+problem_types:
+- status: 400
+  surface: POST /api/query
+  code: null
+  title: query required
+  body: '{"error":"query required","results":[]}'
+  headers:
+    x-ratelimit-limit: '30'
+    x-ratelimit-remaining: '27'
+    cache-control: no-store
+  remediation: Send a JSON body with a non-empty query string (max 200 chars).
+  observed_on: POST /api/query with body {} (observed)
+- status: 400
+  surface: POST /api/query
+  code: null
+  title: no valid networks
+  body: not observed (the SDK comment says an empty networks array "is rejected as no valid networks")
+  remediation: Omit networks to search everything, or send one or more of ebay_uk, amazon_uk.
+  observed_on: documented in js/index.js and mirrored in-band by the MCP server
+- status: 401
+  surface: POST /api/query (keyed requests)
+  code: null
+  title: Unauthorised
+  body: not observed
+  remediation: 'Per the MCP server: "unauthorised - set FETCH_PRICE_API_KEY or register for a free key at fetch-price.com". Check the X-API-Key / Authorization Bearer header; register via POST /api/agents/register.'
+  observed_on: handled explicitly in fetch_price_mcp.py (resp.status_code == 401); not triggered by API Evangelist
+- status: 404
+  surface: any unknown REST path (e.g. /openapi.json, /docs, /mcp)
+  code: null
+  title: not found
+  body: '{"error":"not found"}'
+  remediation: Only /, /health, /api/stats, /api/query, /api/agents/register, /a2a and /.well-known/agent-card.json (+ agent.json) exist.
+  observed_on: GET (observed)
+- status: 404
+  surface: POST / and POST /a2a (JSON-RPC)
+  code: -32601
+  title: Method not found
+  body: '{"error":{"code":-32601,"message":"Method not found: tasks/get"},"id":3,"jsonrpc":"2.0"}'
+  remediation: Only message/send is implemented on the A2A binding (tasks/get and agent/getAuthenticatedExtendedCard return this).
+  observed_on: POST tasks/get and POST agent/getAuthenticatedExtendedCard (observed)
+- status: 400
+  surface: POST /a2a message/send
+  code: -32602
+  title: No text part supplied
+  body: '{"error":{"code":-32602,"message":"No text part supplied"},"id":2,"jsonrpc":"2.0"}'
+  remediation: Send an A2A Message with at least one text part carrying the product query.
+  observed_on: POST message/send with params {} (observed; deliberately no message so no search ran)
+- status: 405
+  surface: GET /api/query
+  code: null
+  title: Method Not Allowed
+  body: (HTML/empty)
+  remediation: /api/query is POST-only.
+  observed_on: GET (observed)
+- status: 429
+  surface: all endpoints
+  code: null
+  title: Too Many Requests
+  body: not observed
+  headers:
+    x-ratelimit-limit: '30'
+    x-ratelimit-remaining: '0'
+    retry-after: not documented
+  remediation: 'Docs: "30 requests/minute per key (or per IP when keyless) ... excess requests get HTTP 429. Monthly lookup quotas are per plan." Read X-RateLimit-Remaining and back off before it reaches 0; on 429 wait for the next minute window or, for a quota 429, upgrade the plan (the MCP server says "rate limit reached on current tier - see fetch-price.com/pricing").'
+  observed_on: documented; header pair observed counting down on every response

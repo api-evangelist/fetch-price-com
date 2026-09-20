@@ -1,0 +1,45 @@
+# kimetsu.dev
+
+> Open infrastructure for coding agents: Kimetsu documentation, public projects, and credential-free discovery.
+
+## Projects
+
+- [Projects directory](https://kimetsu.dev/projects/): human-readable project index
+- [Sidequest Commons](https://rodcor.github.io/sidequest-commons/): daily agent-and-human project selection
+- [Sidequest agent entry](https://rodcor.github.io/sidequest-commons/agents/): participation instructions and machine endpoints
+- [Agent gateway](https://agents.kimetsu.dev/): read-only JSON discovery gateway
+- [Discovery manifest](https://kimetsu.dev/well-known/kimetsu-agents.json): domain-level machine discovery (the canonical /.well-known alias activates with the Cloudflare cutover)
+
+## Security
+
+The agent gateway never requires credentials. Do not send Authorization, Cookie, API keys, private repository content, or other secrets. All gateway operations are public and read-only.
+
+## Kimetsu documentation
+
+# Docs
+
+- [Introduction](/docs): Coding agents are brilliant and forgetful.
+- How Kimetsu Works
+  - [Overview](/docs/how-kimetsu-works): Kimetsu is a sidecar brain for coding agents. It runs alongside supported host agents through MCP (including Claude Code and Codex), or as a standalone chat REPL.
+  - [The brain](/docs/how-kimetsu-works/the-brain): brain.db: the event-sourced SQLite file that holds everything Kimetsu remembers, and how it migrates safely.
+  - [The broker](/docs/how-kimetsu-works/the-broker): How the broker scores, selects, and budgets the memories injected into each run.
+  - [The learning loop](/docs/how-kimetsu-works/learning-loop): Citations, decay, dedup, conflict detection, and the analytics that prove the brain is helping.
+  - [Interfaces](/docs/how-kimetsu-works/interfaces): The MCP tool surface, the host hooks that make the loop reliable, and proactive mid-work recall.
+  - [Retrieval models](/docs/how-kimetsu-works/retrieval-models): Which embedder and reranker Kimetsu ships, why, and how to swap or re-benchmark them.
+  - [Operations](/docs/how-kimetsu-works/operations): The bridge, brain sharing, doctor, and what Kimetsu is not.
+  - [Configuration](/docs/how-kimetsu-works/configuration): Every knob in project.toml, the off-switches, and the environment overrides.
+- [Install & Host Wiring](/docs/install): Kimetsu is a single Rust binary.
+- [Local Models](/docs/local-models): Kimetsu can run entirely on-device: no cloud embedder, no cloud reranker, no cloud distiller. This guide shows how to achieve that with Ollama as the cheap-model backend.
+- [Kimetsu Remote](/docs/remote): Run the brain on a server and connect over HTTP MCP, so a team (or you across machines) shares one brain per repository, with no local checkout.
+- Memory Benchmark
+  - [Overview](/docs/memory-benchmark): Kimetsu's house rule is that every claim ships with a measurement.
+  - [Retrieval & correctness](/docs/memory-benchmark/retrieval-and-correctness): Kimetsu's retrieval and correctness numbers: recall, MRR, latency, stale-hit suppression, and contradiction resolution, all reproducible from the shipped CLI.
+  - [BrainBench](/docs/memory-benchmark/brainbench): BrainBench is Kimetsu's own reader-free capability benchmark: it drives the real binary across difficulty tiers and scores dedup, forgetting, importance, and calibration…
+  - [Structured answerability (v2.8.0)](/docs/memory-benchmark/answerability): Paired evidence-delivery measurements, configuration and remaining gaps for the opt-in fact guard.
+  - [LongMemEval](/docs/memory-benchmark/longmemeval): How Kimetsu scores on LongMemEval, the public long-term-memory benchmark, with the exact setup so the number can be reproduced and compared.
+  - [BEAM](/docs/memory-benchmark/beam): How Kimetsu scores on BEAM, the ten-ability long-term-memory benchmark, at the 100K and 1M token buckets.
+  - [How Kimetsu compares](/docs/memory-benchmark/comparison): How Kimetsu compares to mem0, Cognee, Zep, and Letta on the shared public benchmarks, and what we do not yet claim.
+- [Kimetsu Algorithm](/docs/roi-methodology): How Kimetsu turns memory into measurable savings: every cited memory is credited with the tokens it saved, every injection is charged for the tokens it cost, and kimetsu…
+- [Contributing](/docs/contributing): Thanks for helping improve kimetsu.
+- [Code of Conduct](/docs/code-of-conduct): We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible…
+- [Changelog](/docs/changelog): All notable changes to kimetsu land here. The format follows Keep a Changelog; versions follow SemVer.
