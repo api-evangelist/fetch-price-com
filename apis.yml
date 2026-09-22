@@ -22,6 +22,19 @@ tags:
   - Company
   - Price Comparison
   - Product Search
+  - E-Commerce
+  - Affiliates
+  - Marketplace
+  - Shopping
+  - eBay
+  - United Kingdom
+  - AI Agents
+  - A2A
+  - MCP
+tags_raw:
+  - Company
+  - Price Comparison
+  - Product Search
   - eCommerce
   - Affiliate
   - Marketplace
@@ -46,6 +59,12 @@ apis:
     humanURL: https://fetch-price.com/docs/
     baseURL: https://api.fetch-price.com
     tags:
+      - Price Comparison
+      - Product Search
+      - E-Commerce
+      - eBay
+      - United Kingdom
+    tags_raw:
       - Price Comparison
       - Product Search
       - eCommerce
