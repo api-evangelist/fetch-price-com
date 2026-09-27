@@ -1,0 +1,179 @@
+openapi: 3.2.0
+info:
+  title: fetch-price Agents API
+  version: 1.3.0
+  summary: Live UK marketplace product and price search for AI agents and humans
+  description: Live UK marketplace product search operated by POLICYANDPLAY LTD at https://api.fetch-price.com.
+  contact:
+    name: fetch-price (POLICYANDPLAY LTD)
+    url: https://fetch-price.com/docs/
+    email: contact@fetch-price.com
+  license:
+    name: MIT (SDKs and MCP server; the API itself carries no published licence or terms page)
+    url: https://github.com/fusionx212/fetch-price
+  x-generated-from: documentation
+  x-authored-by: API Evangelist
+servers:
+- url: https://api.fetch-price.com
+  description: Production (the only base the provider publishes)
+security:
+- {}
+- ApiKeyAuth: []
+- BearerAuth: []
+tags:
+- name: Agents
+  description: Agent registration and API key issuance
+paths:
+  /api/agents/register:
+    post:
+      operationId: registerAgent
+      summary: Register an agent and receive an API key
+      description: Creates an agent record and returns an fp_-prefixed API key on the free tier (50 lookups/month). name, owner, networks and endpoint are all required; commission_split is optional. On a paid plan the networks object carries your own affiliate identifiers (an eBay Partner Network campaign_id; an Amazon Associates tag) so returned links carry your tracking (BYOK). The key is emailed to the registering address and is never shown in a public response after issuance; account deletion and key revocation are by email to the provider (https://fetch-price.com/privacy). Not exercised by API Evangelist because it creates an account.
+      tags:
+      - Agents
+      security:
+      - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterAgentRequest'
+            examples:
+              docs-register:
+                summary: The registration example from the provider's docs (placeholders as published)
+                value:
+                  name: MyShoppingAgent
+                  owner: you@example.com
+                  networks:
+                    ebay_uk:
+                      campaign_id: YOUR_EPN_CAMPAIGN_ID
+                  endpoint: https://your-agent.example.com
+      responses:
+        '200':
+          description: Agent created; the response shape as published in the docs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterAgentResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      description: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
+      required:
+      - error
+      properties:
+        error:
+          type: string
+        results:
+          type: array
+          items: {}
+    RegisterAgentResponse:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          description: Prefixed agent-
+        api_key:
+          type: string
+          description: Prefixed fp_
+        tier:
+          type: string
+          example: free
+        query_limit:
+          type: integer
+          example: 50
+    RegisterAgentRequest:
+      type: object
+      required:
+      - name
+      - owner
+      - networks
+      - endpoint
+      properties:
+        name:
+          type: string
+          description: Agent name
+        owner:
+          type: string
+          format: email
+          description: Contact email; the API key is emailed here
+        networks:
+          type: object
+          description: Per-network affiliate configuration keyed by network id. The docs show ebay_uk with a campaign_id (eBay Partner Network) and the home page shows amazon_uk with a tag (Amazon Associates). BYOK routing applies on paid plans only.
+          additionalProperties:
+            type: object
+            properties:
+              campaign_id:
+                type: string
+                description: eBay Partner Network campaign id (ebay_uk)
+              tag:
+                type: string
+                description: Amazon Associates tag (amazon_uk)
+        endpoint:
+          type: string
+          format: uri
+          description: The agent's own endpoint URL
+        commission_split:
+          description: Optional; type not published
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: fp_-prefixed key issued by POST /api/agents/register. Optional on the free tier (keyless requests are counted per IP); required to use a registered agent's plan quota and BYOK routing. The first-party SDKs send this header.
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: fp_-prefixed API key
+      description: The same key sent as Authorization Bearer, which is how the stdio MCP server and the provider's SKILL.md send it.
+x-provenance:
+  method: generated
+  generated: '2026-09-19'
+  authored_by: API Evangelist
+  publisher_openapi: none
+  sources:
+  - https://fetch-price.com/docs/
+  - https://fetch-price.com/llms.txt
+  - https://raw.githubusercontent.com/fusionx212/fetch-price/master/mcp/fetch_price_mcp.py
+  - https://raw.githubusercontent.com/fusionx212/fetch-price/master/js/index.js
+  - https://raw.githubusercontent.com/fusionx212/fetch-price/master/python/fetch_price/__init__.py
+  exercised: true
+  live_checks:
+  - request: GET https://api.fetch-price.com/health
+    http_status: 200
+    body: '{"ebay_live":true,"networks":["ebay_uk","amazon_uk"],"status":"ok","version":"1.3.0"}'
+  - request: GET https://api.fetch-price.com/api/stats
+    http_status: 200
+    body: '{"agents_active":1,"networks_available":["ebay_uk","amazon_uk"],"version":"1.2.0"}'
+  - request: POST https://api.fetch-price.com/api/query with body {}
+    http_status: 400
+    body: '{"error":"query required","results":[]}'
+    headers: x-ratelimit-limit 30, x-ratelimit-remaining 27, access-control-allow-origin *
+  - request: GET https://api.fetch-price.com/api/query
+    http_status: 405
+  - request: GET https://api.fetch-price.com/
+    http_status: 200
+    body: '{"a2a":"POST / or /a2a (JSON-RPC 2.0, message/send)","agent_card":"/.well-known/agent-card.json","docs":"https://fetch-price.com/docs","health":"/health","query":"POST /api/query","service":"fetch-price API"}'
+  not_exercised:
+  - POST /api/agents/register creates an account and issues a key, so it was described from the docs only.
+  - A successful POST /api/query consumes a free-tier lookup and runs a live eBay search; the 200 shape is the provider's captured live response of 27 Jul 2026 reproduced verbatim from the docs.
+  openapi_probes_that_missed:
+  - https://api.fetch-price.com/openapi.json (404)
+  - https://api.fetch-price.com/openapi.yaml (404)
+  - https://api.fetch-price.com/swagger.json (404)
+  - https://api.fetch-price.com/docs (404)
+  - https://fetch-price.com/openapi.json (404)

@@ -1,0 +1,21 @@
+{
+  "provider": "fetch-price-com",
+  "sources": [
+    "fetch-price-com-openapi.yml"
+  ],
+  "outputs": [
+    "fetch-price-com-agents-api-openapi.yml",
+    "fetch-price-com-products-api-openapi.yml",
+    "fetch-price-com-service-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/fetch-price-com-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "fetch-price-com-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+3 apis, 4 total)"
+  ],
+  "skipped": []
+}

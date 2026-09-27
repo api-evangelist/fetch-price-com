@@ -15,6 +15,22 @@ x-type: company
 x-source: harvest:a2a-registry
 x-tier: profiled
 x-tier-reason: enrichment pass 2026-09-19 (local-v3) on the a2a-registry harvest stub
+deliveryModel:
+  model: saas
+  license_evidence:
+    not_product:
+    - fusionx212/fetch-price
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-not-product
+  generated: '2026-09-25'
+  method: derived
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
@@ -45,96 +61,127 @@ tags_raw:
   - A2A
   - MCP
 apis:
-  - name: fetch-price API
-    description: >-
-      REST API at https://api.fetch-price.com. POST /api/query searches live UK marketplace listings by
-      plain-language query (max_results 1-20, max_price in GBP, networks ebay_uk / amazon_uk) and returns
-      normalised results, each declaring result_type item (a real listing with live price, condition,
-      image, item_id and an affiliate-tracked buy URL) or search_link (a tracked search URL with price 0
-      for networks not yet live). POST /api/agents/register issues an fp_ API key; GET /health and GET
-      /api/stats are public. Keyless on the free tier; X-API-Key or Bearer otherwise. Every response
-      carries X-RateLimit-Limit and X-RateLimit-Remaining; 429 on the 30/minute limit or the plan quota.
-      Documented in HTML only - the OpenAPI here is API Evangelist-generated from that reference and
-      confirmed against live responses on 2026-09-19.
-    humanURL: https://fetch-price.com/docs/
-    baseURL: https://api.fetch-price.com
-    tags:
-      - Price Comparison
-      - Product Search
-      - E-Commerce
-      - eBay
-      - United Kingdom
-    tags_raw:
-      - Price Comparison
-      - Product Search
-      - eCommerce
-      - eBay
-      - United Kingdom
-    x-evidence:
-      verified: '2026-09-19'
-      method: fetched docs + live unauthenticated probes
-      docs_describe: four endpoints with field tables, base URL, auth headers, rate limits and a captured live response
-      endpoint_checks:
-        - GET https://api.fetch-price.com/health -> 200 application/json
-        - GET https://api.fetch-price.com/api/stats -> 200 application/json
-        - POST https://api.fetch-price.com/api/query {} -> 400 {"error":"query required","results":[]}
-        - GET https://api.fetch-price.com/api/query -> 405
-    properties:
-      - type: OpenAPI
-        url: openapi/fetch-price-com-openapi.yml
-        name: OpenAPI (API Evangelist-generated from the provider's docs; provider publishes none)
-      - type: Documentation
-        url: https://fetch-price.com/docs/
-      - type: APIReference
-        url: https://fetch-price.com/docs/#endpoints
-      - type: GettingStarted
-        url: https://fetch-price.com/docs/#quickstart
-      - type: Authentication
-        url: authentication/fetch-price-com-authentication.yml
-      - type: RateLimits
-        url: rate-limits/fetch-price-com-rate-limits.yml
-      - type: ErrorCatalog
-        url: errors/fetch-price-com-problem-types.yml
-      - type: Conventions
-        url: conventions/fetch-price-com-conventions.yml
-      - type: Plans
-        url: plans/fetch-price-com-plans-pricing.yml
-      - type: DataModel
-        url: data-model/fetch-price-com-data-model.yml
-      - type: MCPServer
-        url: mcp/fetch-price-com-mcp.yml
-      - type: ToolCrosswalk
-        url: mcp/fetch-price-com-tool-crosswalk.yml
-      - type: SDKs
-        url: packages/fetch-price-com-packages.yml
-      - type: AgentSkill
-        url: skills/_index.yml
-  - name: fetch-price A2A Agent
-    description: >-
-      Agent-to-Agent surface declared by the A2A 1.0.0 agent card at
-      https://fetch-price.com/.well-known/agent-card.json (also served at the legacy agent.json path and
-      on api.fetch-price.com): a JSONRPC binding at https://api.fetch-price.com (POST / or /a2a) with two
-      skills, search_products and service_status, that map one-to-one onto POST /api/query and GET /health.
-      streaming and pushNotifications are false; no security scheme is declared, consistent with the
-      keyless free tier. message/send is live - an empty message returns JSON-RPC -32602 "No text part
-      supplied" - while unknown methods return HTTP 404 with -32601. Graded conformant.
-    humanURL: https://fetch-price.com/docs/
-    baseURL: https://api.fetch-price.com/a2a
-    tags:
-      - A2A
-      - AI Agents
-      - Product Search
-      - Price Comparison
-    properties:
-      - type: AgentCard
-        url: a2a/fetch-price-com-a2a.yml
-      - type: AgentCard
-        url: https://fetch-price.com/.well-known/agent-card.json
-        name: Agent card (provider-hosted)
-      - type: ToolCrosswalk
-        url: mcp/fetch-price-com-tool-crosswalk.yml
-      - type: ErrorCatalog
-        url: errors/fetch-price-com-problem-types.yml
+- name: fetch-price A2A Agent
+  description: >-
+    Agent-to-Agent surface declared by the A2A 1.0.0 agent card at https://fetch-price.com/.well-known/agent-card.json
+    (also served at the legacy agent.json path and on api.fetch-price.com): a JSONRPC binding at https://api.fetch-price.com
+    (POST / or /a2a) with two skills, search_products and service_status, that map one-to-one onto POST
+    /api/query and GET /health. streaming and pushNotifications are false; no security scheme is declared,
+    consistent with the keyless free tier. message/send is live - an empty message returns JSON-RPC -32602
+    "No text part supplied" - while unknown methods return HTTP 404 with -32601. Graded conformant.
+  humanURL: https://fetch-price.com/docs/
+  baseURL: https://api.fetch-price.com/a2a
+  tags:
+  - A2A
+  - AI Agents
+  - Product Search
+  - Price Comparison
+  properties:
+  - type: AgentCard
+    url: a2a/fetch-price-com-a2a.yml
+  - type: AgentCard
+    url: https://fetch-price.com/.well-known/agent-card.json
+    name: Agent card (provider-hosted)
+  - type: ToolCrosswalk
+    url: mcp/fetch-price-com-tool-crosswalk.yml
+  - type: ErrorCatalog
+    url: errors/fetch-price-com-problem-types.yml
+- aid: fetch-price-com:fetch-price-com-agents-api
+  name: POLICYANDPLAY LTD Agents API
+  description: Agent registration and API key issuance
+  humanURL: https://fetch-price.com/docs/
+  baseURL: https://api.fetch-price.com
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/fetch-price-com-agents-api-openapi.yml
+  - type: Documentation
+    url: https://fetch-price.com/docs/
+  - type: APIReference
+    url: https://fetch-price.com/docs/#endpoints
+  - type: GettingStarted
+    url: https://fetch-price.com/docs/#quickstart
+  - type: Authentication
+    url: authentication/fetch-price-com-authentication.yml
+  - type: RateLimits
+    url: rate-limits/fetch-price-com-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/fetch-price-com-problem-types.yml
+  - type: Conventions
+    url: conventions/fetch-price-com-conventions.yml
+  - type: Plans
+    url: plans/fetch-price-com-plans-pricing.yml
+  - type: DataModel
+    url: data-model/fetch-price-com-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/fetch-price-com-tool-crosswalk.yml
+  - type: SDKs
+    url: packages/fetch-price-com-packages.yml
+- aid: fetch-price-com:fetch-price-com-products-api
+  name: POLICYANDPLAY LTD Products API
+  description: Live UK marketplace product and price search
+  humanURL: https://fetch-price.com/docs/
+  baseURL: https://api.fetch-price.com
+  tags:
+  - Products
+  properties:
+  - type: OpenAPI
+    url: openapi/fetch-price-com-products-api-openapi.yml
+  - type: Documentation
+    url: https://fetch-price.com/docs/
+  - type: APIReference
+    url: https://fetch-price.com/docs/#endpoints
+  - type: GettingStarted
+    url: https://fetch-price.com/docs/#quickstart
+  - type: Authentication
+    url: authentication/fetch-price-com-authentication.yml
+  - type: RateLimits
+    url: rate-limits/fetch-price-com-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/fetch-price-com-problem-types.yml
+  - type: Conventions
+    url: conventions/fetch-price-com-conventions.yml
+  - type: Plans
+    url: plans/fetch-price-com-plans-pricing.yml
+  - type: DataModel
+    url: data-model/fetch-price-com-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/fetch-price-com-tool-crosswalk.yml
+  - type: SDKs
+    url: packages/fetch-price-com-packages.yml
+- aid: fetch-price-com:fetch-price-com-service-api
+  name: POLICYANDPLAY LTD Service API
+  description: Health and public statistics
+  humanURL: https://fetch-price.com/docs/
+  baseURL: https://api.fetch-price.com
+  tags:
+  - Service
+  properties:
+  - type: OpenAPI
+    url: openapi/fetch-price-com-service-api-openapi.yml
+  - type: Documentation
+    url: https://fetch-price.com/docs/
+  - type: APIReference
+    url: https://fetch-price.com/docs/#endpoints
+  - type: GettingStarted
+    url: https://fetch-price.com/docs/#quickstart
+  - type: Authentication
+    url: authentication/fetch-price-com-authentication.yml
+  - type: RateLimits
+    url: rate-limits/fetch-price-com-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/fetch-price-com-problem-types.yml
+  - type: Conventions
+    url: conventions/fetch-price-com-conventions.yml
+  - type: Plans
+    url: plans/fetch-price-com-plans-pricing.yml
+  - type: DataModel
+    url: data-model/fetch-price-com-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/fetch-price-com-tool-crosswalk.yml
+  - type: SDKs
+    url: packages/fetch-price-com-packages.yml
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
@@ -207,3 +254,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 24
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://fetch-price.com/.well-known/agent-card.json"
+  grade: "conformant"
+  protocol_version: "1.0.0"
+  control: 404
