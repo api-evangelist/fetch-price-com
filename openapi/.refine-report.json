@@ -1,21 +1,24 @@
 {
   "provider": "fetch-price-com",
   "sources": [
-    "fetch-price-com-openapi.yml"
+    "_original/fetch-price-com-openapi.yml"
   ],
   "outputs": [
     "fetch-price-com-agents-api-openapi.yml",
     "fetch-price-com-products-api-openapi.yml",
     "fetch-price-com-service-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/fetch-price-com-openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "fetch-price-com-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "apis.yml register: written (+3 apis, 4 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "fetch-price-com-agents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fetch-price-com-products-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "fetch-price-com-service-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

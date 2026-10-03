@@ -70,17 +70,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
-      type: object
-      description: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
-      required:
-      - error
-      properties:
-        error:
-          type: string
-        results:
-          type: array
-          items: {}
     RegisterAgentResponse:
       type: object
       properties:
@@ -96,6 +85,17 @@ components:
         query_limit:
           type: integer
           example: 50
+    Error:
+      type: object
+      description: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
+      required:
+      - error
+      properties:
+        error:
+          type: string
+        results:
+          type: array
+          items: {}
     RegisterAgentRequest:
       type: object
       required:

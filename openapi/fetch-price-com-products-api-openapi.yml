@@ -110,12 +110,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Network:
-      type: string
-      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
-      enum:
-      - ebay_uk
-      - amazon_uk
     Error:
       type: object
       description: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
@@ -180,17 +174,6 @@ components:
           type: string
           format: uri
           description: Direct purchase URL, affiliate-tracked by the marketplace. Present to the user unchanged.
-    QueryResponse:
-      type: object
-      required:
-      - results
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Result'
-        meta:
-          $ref: '#/components/schemas/QueryMeta'
     QueryRequest:
       type: object
       required:
@@ -221,6 +204,23 @@ components:
           type: string
           default: GBP
           description: Sent by the first-party SDKs (always GBP); not in the docs field table.
+    Network:
+      type: string
+      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
+      enum:
+      - ebay_uk
+      - amazon_uk
+    QueryResponse:
+      type: object
+      required:
+      - results
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        meta:
+          $ref: '#/components/schemas/QueryMeta'
   headers:
     X-RateLimit-Remaining:
       description: Requests remaining in the current minute window

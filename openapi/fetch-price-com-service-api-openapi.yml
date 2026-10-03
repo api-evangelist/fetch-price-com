@@ -82,12 +82,6 @@ paths:
                     version: 1.2.0
 components:
   schemas:
-    Network:
-      type: string
-      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
-      enum:
-      - ebay_uk
-      - amazon_uk
     Health:
       type: object
       properties:
@@ -113,6 +107,12 @@ components:
             $ref: '#/components/schemas/Network'
         version:
           type: string
+    Network:
+      type: string
+      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
+      enum:
+      - ebay_uk
+      - amazon_uk
   headers:
     X-RateLimit-Limit:
       description: Requests allowed per minute for this key or IP (observed value 30)
