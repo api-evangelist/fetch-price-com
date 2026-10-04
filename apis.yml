@@ -124,6 +124,8 @@ apis:
   humanURL: https://fetch-price.com/docs/
   baseURL: https://api.fetch-price.com
   tags:
+  - Product
+  tags_raw:
   - Products
   properties:
   - type: OpenAPI
@@ -156,6 +158,8 @@ apis:
   humanURL: https://fetch-price.com/docs/
   baseURL: https://api.fetch-price.com
   tags:
+  - Services
+  tags_raw:
   - Service
   properties:
   - type: OpenAPI
