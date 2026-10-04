@@ -114,12 +114,12 @@ components:
       - ebay_uk
       - amazon_uk
   headers:
-    X-RateLimit-Limit:
-      description: Requests allowed per minute for this key or IP (observed value 30)
-      schema:
-        type: integer
     X-RateLimit-Remaining:
       description: Requests remaining in the current minute window
+      schema:
+        type: integer
+    X-RateLimit-Limit:
+      description: Requests allowed per minute for this key or IP (observed value 30)
       schema:
         type: integer
   securitySchemes:

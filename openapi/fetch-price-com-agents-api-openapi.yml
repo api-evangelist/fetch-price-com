@@ -70,21 +70,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    RegisterAgentResponse:
-      type: object
-      properties:
-        agent_id:
-          type: string
-          description: Prefixed agent-
-        api_key:
-          type: string
-          description: Prefixed fp_
-        tier:
-          type: string
-          example: free
-        query_limit:
-          type: integer
-          example: 50
     Error:
       type: object
       description: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
@@ -129,6 +114,21 @@ components:
           description: The agent's own endpoint URL
         commission_split:
           description: Optional; type not published
+    RegisterAgentResponse:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          description: Prefixed agent-
+        api_key:
+          type: string
+          description: Prefixed fp_
+        tier:
+          type: string
+          example: free
+        query_limit:
+          type: integer
+          example: 50
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

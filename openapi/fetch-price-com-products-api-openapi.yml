@@ -110,17 +110,47 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Error:
+    QueryRequest:
       type: object
-      description: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
       required:
-      - error
+      - query
       properties:
-        error:
+        query:
           type: string
+          maxLength: 200
+          description: Plain-language product search, max 200 chars
+        max_results:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 5
+          description: Items per network. Default 5, max 20
+        max_price:
+          type: number
+          description: Upper price bound in GBP, applied at source
+        networks:
+          type: array
+          description: 'Marketplaces to search. Default: both. Send only when choosing - an empty array is rejected as "no valid networks" (per the first-party SDK).'
+          items:
+            $ref: '#/components/schemas/Network'
+        min_price:
+          type: number
+          description: Lower price bound in GBP. Sent by the first-party JavaScript and Python SDKs; not in the docs field table.
+        currency:
+          type: string
+          default: GBP
+          description: Sent by the first-party SDKs (always GBP); not in the docs field table.
+    QueryResponse:
+      type: object
+      required:
+      - results
+      properties:
         results:
           type: array
-          items: {}
+          items:
+            $ref: '#/components/schemas/Result'
+        meta:
+          $ref: '#/components/schemas/QueryMeta'
     QueryMeta:
       type: object
       properties:
@@ -132,6 +162,23 @@ components:
             $ref: '#/components/schemas/Network'
         returned:
           type: integer
+    Network:
+      type: string
+      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
+      enum:
+      - ebay_uk
+      - amazon_uk
+    Error:
+      type: object
+      description: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
+      required:
+      - error
+      properties:
+        error:
+          type: string
+        results:
+          type: array
+          items: {}
     Result:
       type: object
       description: One normalised listing. Item results include product, price, currency, condition, network, url, image and item_id.
@@ -174,53 +221,6 @@ components:
           type: string
           format: uri
           description: Direct purchase URL, affiliate-tracked by the marketplace. Present to the user unchanged.
-    QueryRequest:
-      type: object
-      required:
-      - query
-      properties:
-        query:
-          type: string
-          maxLength: 200
-          description: Plain-language product search, max 200 chars
-        max_results:
-          type: integer
-          minimum: 1
-          maximum: 20
-          default: 5
-          description: Items per network. Default 5, max 20
-        max_price:
-          type: number
-          description: Upper price bound in GBP, applied at source
-        networks:
-          type: array
-          description: 'Marketplaces to search. Default: both. Send only when choosing - an empty array is rejected as "no valid networks" (per the first-party SDK).'
-          items:
-            $ref: '#/components/schemas/Network'
-        min_price:
-          type: number
-          description: Lower price bound in GBP. Sent by the first-party JavaScript and Python SDKs; not in the docs field table.
-        currency:
-          type: string
-          default: GBP
-          description: Sent by the first-party SDKs (always GBP); not in the docs field table.
-    Network:
-      type: string
-      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
-      enum:
-      - ebay_uk
-      - amazon_uk
-    QueryResponse:
-      type: object
-      required:
-      - results
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Result'
-        meta:
-          $ref: '#/components/schemas/QueryMeta'
   headers:
     X-RateLimit-Remaining:
       description: Requests remaining in the current minute window
