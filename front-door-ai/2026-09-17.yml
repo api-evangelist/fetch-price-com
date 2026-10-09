@@ -1,0 +1,33 @@
+# Front Door AI Index — fetch-price-com — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: fetch-price-com
+  lexicon_version: '1.0'
+  probed_at: '2026-09-25'
+  host: fetch-price.com
+  final_host: fetch-price.com
+  ownership: own
+  owner: fetch-price-com
+  shares_host_with: null
+  inherited_from: null
+  alias_of: null
+  verdict: scored
+  score: 22
+  band: 6
+  band_label: dominant
+  host_score: 22
+  density: 49.77
+  words: 442
+  tiers:
+    agentic: 10
+    core: 12
+    model: 0
+  ambiguous: 20
+  top_terms:
+    agent: 19
+    AI: 11
+    AI agent: 5
+    llms.txt: 5
+    LLMs: 1
+    intelligence: 1
