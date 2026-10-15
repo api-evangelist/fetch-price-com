@@ -1,5 +1,5 @@
 generated: '2026-10-12'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/fetch-price-com/integrations
 - https://zapier.com/apps/fetch-price/integrations
@@ -9,6 +9,7 @@ source:
 - https://composio.dev/toolkits/fetch-price-com
 - https://monid.ai/tools/fetch-price-com
 checked:
+- https://a2aregistry.org/api/agents
 - https://composio.dev/toolkits/fetch-price-com
 - https://monid.ai/tools/fetch-price-com
 - https://n8n.io/integrations/fetch-price-com/
@@ -18,5 +19,73 @@ checked:
 - https://zapier.com/apps/policyandplay-ltd/integrations
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: A2A protocol (own Agent Card)
+  partner: null
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: A2A agent
+  evidence: https://fetch-price.com/.well-known/agent-card.json
+  channel: provider-built
+  relationship: compatible
+  shape: a2a
+  evidence_kind: own-wellknown
+  degree: conformant
+  report_only: true
+  a2a_card:
+    grade: conformant
+    verdict: live
+    protocol_version: 1.0.0
+    deviations: []
+    card_subject: unknown
+  contract_reference:
+    register: provider's own /.well-known/agent-card.json
+    spec_file: null
+    standard: A2A
+    role: a2a-agent-card
+    registered_name: fetch-price
+    organization: SINCOR
+    matched_domain: fetch-price.com
+    matched_by: own-domain
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-15'
+  detected_by: sweep-ai-agents.py
+  first_seen: '2026-10-15'
+- partner_name: a2aregistry.org
+  partner: null
+  partner_match: register
+  type: register
+  direction: partner-built
+  category: A2A agent registry
+  evidence: https://a2aregistry.org/api/agents/2447e032-d557-4f7b-80e3-ebb21b41cd4b
+  channel: standard-directory
+  relationship: compatible
+  shape: a2a
+  evidence_kind: register-listing
+  degree: listed
+  report_only: true
+  a2a_register:
+    hosts:
+    - fetch-price.com
+    conformance: true
+    task_conformance_working: false
+    healthy: true
+    signal_note: booleans over the provider's hosts; listings are context, never read
+  contract_reference:
+    register: a2aregistry.org /api/agents
+    spec_file: null
+    standard: A2A
+    role: a2a-registry-listing
+    registered_name: POLICYANDPLAY LTD
+    matched_domain: fetch-price.com
+    matched_by: domain
+    matched_via: card-host
+    listings_context: 1
+    sample_agents:
+    - fetch-price
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-15'
+  detected_by: sweep-ai-agents.py
+  first_seen: '2026-10-15'
 templates: []
