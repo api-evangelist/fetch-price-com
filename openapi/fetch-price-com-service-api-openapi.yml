@@ -96,6 +96,12 @@ components:
             $ref: '#/components/schemas/Network'
         ebay_live:
           type: boolean
+    Network:
+      type: string
+      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
+      enum:
+      - ebay_uk
+      - amazon_uk
     Stats:
       type: object
       properties:
@@ -107,19 +113,13 @@ components:
             $ref: '#/components/schemas/Network'
         version:
           type: string
-    Network:
-      type: string
-      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
-      enum:
-      - ebay_uk
-      - amazon_uk
   headers:
-    X-RateLimit-Remaining:
-      description: Requests remaining in the current minute window
-      schema:
-        type: integer
     X-RateLimit-Limit:
       description: Requests allowed per minute for this key or IP (observed value 30)
+      schema:
+        type: integer
+    X-RateLimit-Remaining:
+      description: Requests remaining in the current minute window
       schema:
         type: integer
   securitySchemes:

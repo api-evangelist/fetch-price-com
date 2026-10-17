@@ -81,6 +81,21 @@ components:
         results:
           type: array
           items: {}
+    RegisterAgentResponse:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          description: Prefixed agent-
+        api_key:
+          type: string
+          description: Prefixed fp_
+        tier:
+          type: string
+          example: free
+        query_limit:
+          type: integer
+          example: 50
     RegisterAgentRequest:
       type: object
       required:
@@ -114,21 +129,6 @@ components:
           description: The agent's own endpoint URL
         commission_split:
           description: Optional; type not published
-    RegisterAgentResponse:
-      type: object
-      properties:
-        agent_id:
-          type: string
-          description: Prefixed agent-
-        api_key:
-          type: string
-          description: Prefixed fp_
-        tier:
-          type: string
-          example: free
-        query_limit:
-          type: integer
-          example: 50
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
