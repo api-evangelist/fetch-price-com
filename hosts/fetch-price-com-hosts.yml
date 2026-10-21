@@ -1,0 +1,78 @@
+generated: '2026-10-20'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 4
+  own: 2
+  other_domain: 1
+  platform: 1
+  roles:
+  - api
+  - other
+  - portal
+  - website
+hosts:
+- host: api.fetch-price.com
+  found_by:
+  - apis[]
+  - probed
+  - site-links
+  - docs-index
+  - contract-discovery
+  - well-known
+  types: []
+  serves:
+  - api
+  - docs
+  registrable_domain: fetch-price.com
+  role: api
+  relation: own
+- host: api.fetch-price.com<
+  found_by:
+  - pointer
+  types:
+  - DeveloperPortal
+  serves: []
+  registrable_domain: fetch-price.com<
+  role: portal
+  relation: other-domain
+- host: fetch-price.com
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - docs-index
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types:
+  - Website
+  - Documentation
+  - APIReference
+  - GettingStarted
+  - Pricing
+  - SignUp
+  - PrivacyPolicy
+  - LLMsTxt
+  - DataSubjectRequest
+  - Subprocessors
+  serves:
+  - docs
+  - cdn
+  - hosting
+  vendor: cloudflare
+  registrable_domain: fetch-price.com
+  role: website
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  - docs-index
+  types:
+  - GitHubRepository
+  serves:
+  - docs
+  registrable_domain: github.com
+  role: other
+  relation: platform

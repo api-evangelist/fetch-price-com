@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/fetch-price-com/main/json-schema/fetch-price-com-query-request-schema.json",
+  "title": "QueryRequest",
+  "x-generated": "2026-10-20",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/fetch-price-com-products-api-openapi.yml#/components/schemas/QueryRequest",
+  "type": "object",
+  "required": [
+    "query"
+  ],
+  "properties": {
+    "query": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Plain-language product search, max 200 chars"
+    },
+    "max_results": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 20,
+      "default": 5,
+      "description": "Items per network. Default 5, max 20"
+    },
+    "max_price": {
+      "type": "number",
+      "description": "Upper price bound in GBP, applied at source"
+    },
+    "networks": {
+      "type": "array",
+      "description": "Marketplaces to search. Default: both. Send only when choosing - an empty array is rejected as \"no valid networks\" (per the first-party SDK).",
+      "items": {
+        "$ref": "#/$defs/Network"
+      }
+    },
+    "min_price": {
+      "type": "number",
+      "description": "Lower price bound in GBP. Sent by the first-party JavaScript and Python SDKs; not in the docs field table."
+    },
+    "currency": {
+      "type": "string",
+      "default": "GBP",
+      "description": "Sent by the first-party SDKs (always GBP); not in the docs field table."
+    }
+  },
+  "$defs": {
+    "Network": {
+      "type": "string",
+      "description": "Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.",
+      "enum": [
+        "ebay_uk",
+        "amazon_uk"
+      ]
+    }
+  }
+}

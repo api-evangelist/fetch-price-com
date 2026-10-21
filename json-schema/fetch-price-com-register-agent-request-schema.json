@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/fetch-price-com/main/json-schema/fetch-price-com-register-agent-request-schema.json",
+  "title": "RegisterAgentRequest",
+  "x-generated": "2026-10-20",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/fetch-price-com-agents-api-openapi.yml#/components/schemas/RegisterAgentRequest",
+  "type": "object",
+  "required": [
+    "name",
+    "owner",
+    "networks",
+    "endpoint"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Agent name"
+    },
+    "owner": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact email; the API key is emailed here"
+    },
+    "networks": {
+      "type": "object",
+      "description": "Per-network affiliate configuration keyed by network id. The docs show ebay_uk with a campaign_id (eBay Partner Network) and the home page shows amazon_uk with a tag (Amazon Associates). BYOK routing applies on paid plans only.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "description": "eBay Partner Network campaign id (ebay_uk)"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Amazon Associates tag (amazon_uk)"
+          }
+        }
+      }
+    },
+    "endpoint": {
+      "type": "string",
+      "format": "uri",
+      "description": "The agent's own endpoint URL"
+    },
+    "commission_split": {
+      "description": "Optional; type not published"
+    }
+  }
+}

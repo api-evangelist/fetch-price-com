@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/fetch-price-com/main/json-schema/fetch-price-com-register-agent-response-schema.json",
+  "title": "RegisterAgentResponse",
+  "x-generated": "2026-10-20",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/fetch-price-com-agents-api-openapi.yml#/components/schemas/RegisterAgentResponse",
+  "type": "object",
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "description": "Prefixed agent-"
+    },
+    "api_key": {
+      "type": "string",
+      "description": "Prefixed fp_"
+    },
+    "tier": {
+      "type": "string"
+    },
+    "query_limit": {
+      "type": "integer"
+    }
+  }
+}

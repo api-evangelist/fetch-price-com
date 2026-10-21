@@ -1,0 +1,78 @@
+generated: '2026-10-20'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/fetch-price-com-agents-api-openapi.yml
+- openapi/fetch-price-com-products-api-openapi.yml
+- openapi/fetch-price-com-service-api-openapi.yml
+vocabulary:
+  name: POLICYANDPLAY LTD Domain Vocabulary
+  description: 'Terms declared by POLICYANDPLAY LTD''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-20'
+  terms:
+  - term: Agents
+    definition: Agent registration and API key issuance
+    tags:
+    - Resource Group
+    source: openapi/fetch-price-com-agents-api-openapi.yml
+  - term: Products
+    definition: Live UK marketplace product and price search
+    tags:
+    - Resource Group
+    source: openapi/fetch-price-com-products-api-openapi.yml
+  - term: Service
+    definition: Health and public statistics
+    tags:
+    - Resource Group
+    source: openapi/fetch-price-com-service-api-openapi.yml
+  - term: Error
+    definition: 'Plain JSON error envelope (not RFC 9457): a human-readable error string; /api/query also returns an empty results array.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-agents-api-openapi.yml#/components/schemas/Error
+  - term: RegisterAgentResponse
+    definition: 'Object declared by the contract with fields: agent_id, api_key, tier, query_limit.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-agents-api-openapi.yml#/components/schemas/RegisterAgentResponse
+  - term: RegisterAgentRequest
+    definition: 'Object declared by the contract with fields: name, owner, networks, endpoint, commission_split.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-agents-api-openapi.yml#/components/schemas/RegisterAgentRequest
+  - term: QueryMeta
+    definition: 'Object declared by the contract with fields: query, networks_searched, returned.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-products-api-openapi.yml#/components/schemas/QueryMeta
+  - term: QueryResponse
+    definition: 'Object declared by the contract with fields: results, meta.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-products-api-openapi.yml#/components/schemas/QueryResponse
+  - term: Network
+    definition: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
+    tags:
+    - Enumeration
+    source: openapi/fetch-price-com-products-api-openapi.yml#/components/schemas/Network
+  - term: Result
+    definition: One normalised listing. Item results include product, price, currency, condition, network, url, image and item_id.
+    tags:
+    - Object
+    source: openapi/fetch-price-com-products-api-openapi.yml#/components/schemas/Result
+  - term: QueryRequest
+    definition: 'Object declared by the contract with fields: query, max_results, max_price, networks, min_price, currency.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-products-api-openapi.yml#/components/schemas/QueryRequest
+  - term: Health
+    definition: 'Object declared by the contract with fields: status, version, networks, ebay_live.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-service-api-openapi.yml#/components/schemas/Health
+  - term: Stats
+    definition: 'Object declared by the contract with fields: agents_active, networks_available, version.'
+    tags:
+    - Object
+    source: openapi/fetch-price-com-service-api-openapi.yml#/components/schemas/Stats

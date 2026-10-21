@@ -49,7 +49,7 @@ edges:
     matched_domain: fetch-price.com
     matched_by: own-domain
     detected_by: sweep-ai-agents.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   detected_by: sweep-ai-agents.py
   first_seen: '2026-10-15'
 - partner_name: a2aregistry.org
@@ -85,7 +85,7 @@ edges:
     sample_agents:
     - fetch-price
     detected_by: sweep-ai-agents.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   detected_by: sweep-ai-agents.py
   first_seen: '2026-10-15'
 templates: []

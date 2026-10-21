@@ -3,7 +3,7 @@ info:
   title: fetch-price Service API
   version: 1.3.0
   summary: Live UK marketplace product and price search for AI agents and humans
-  description: Live UK marketplace product search operated by POLICYANDPLAY LTD at https://api.fetch-price.com.
+  description: Live UK marketplace product search operated by POLICYANDPLAY LTD at https://api.fetch-price.com. One POST returns real listings with live GBP prices, condition, marketplace and an affiliate-tracked purchase URL, normalised to one JSON shape. eBay UK is live via the official eBay Browse API; Amazon UK is rolling out and currently returns a tracked search link (result_type search_link) rather than items. The free tier needs no API key (50 lookups/month); registering an agent issues an fp_-prefixed key that raises limits and enables bring-your-own affiliate tracking (BYOK) on paid plans. Every response carries X-RateLimit-Limit and X-RateLimit-Remaining; the fixed limit is 30 requests per minute per key or per IP. Purchase links are affiliate-tracked and the provider asks agents to pass that disclosure on to the human (https://fetch-price.com/privacy). PROVENANCE - the provider publishes no OpenAPI. This document was written by API Evangelist from the provider's own API reference at https://fetch-price.com/docs/ (the endpoint tables, field tables and captured live responses), the first-party SDK sources and the stdio MCP server source in https://github.com/fusionx212/fetch-price, and was checked against live unauthenticated responses from api.fetch-price.com on 2026-09-19 (see x-provenance). It is a description of a real, exercised API, not a first-party contract; treat the provider's docs as authoritative where they differ.
   contact:
     name: fetch-price (POLICYANDPLAY LTD)
     url: https://fetch-price.com/docs/
@@ -81,7 +81,33 @@ paths:
                     - amazon_uk
                     version: 1.2.0
 components:
+  headers:
+    X-RateLimit-Limit:
+      description: Requests allowed per minute for this key or IP (observed value 30)
+      schema:
+        type: integer
+    X-RateLimit-Remaining:
+      description: Requests remaining in the current minute window
+      schema:
+        type: integer
   schemas:
+    Stats:
+      type: object
+      properties:
+        agents_active:
+          type: integer
+        networks_available:
+          type: array
+          items:
+            $ref: '#/components/schemas/Network'
+        version:
+          type: string
+    Network:
+      type: string
+      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
+      enum:
+      - ebay_uk
+      - amazon_uk
     Health:
       type: object
       properties:
@@ -96,32 +122,6 @@ components:
             $ref: '#/components/schemas/Network'
         ebay_live:
           type: boolean
-    Network:
-      type: string
-      description: Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.
-      enum:
-      - ebay_uk
-      - amazon_uk
-    Stats:
-      type: object
-      properties:
-        agents_active:
-          type: integer
-        networks_available:
-          type: array
-          items:
-            $ref: '#/components/schemas/Network'
-        version:
-          type: string
-  headers:
-    X-RateLimit-Limit:
-      description: Requests allowed per minute for this key or IP (observed value 30)
-      schema:
-        type: integer
-    X-RateLimit-Remaining:
-      description: Requests remaining in the current minute window
-      schema:
-        type: integer
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

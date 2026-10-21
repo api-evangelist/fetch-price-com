@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/fetch-price-com/main/json-schema/fetch-price-com-query-response-schema.json",
+  "title": "QueryResponse",
+  "x-generated": "2026-10-20",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/fetch-price-com-products-api-openapi.yml#/components/schemas/QueryResponse",
+  "type": "object",
+  "required": [
+    "results"
+  ],
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Result"
+      }
+    },
+    "meta": {
+      "$ref": "#/$defs/QueryMeta"
+    }
+  },
+  "$defs": {
+    "Network": {
+      "type": "string",
+      "description": "Marketplace identifier. ebay_uk is live; amazon_uk is rolling out and returns a search_link result.",
+      "enum": [
+        "ebay_uk",
+        "amazon_uk"
+      ]
+    },
+    "QueryMeta": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "networks_searched": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Network"
+          }
+        },
+        "returned": {
+          "type": "integer"
+        }
+      }
+    },
+    "Result": {
+      "type": "object",
+      "description": "One normalised listing. Item results include product, price, currency, condition, network, url, image and item_id.",
+      "required": [
+        "product",
+        "price",
+        "currency",
+        "network",
+        "result_type",
+        "url"
+      ],
+      "properties": {
+        "product": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "description": "Live price in GBP; 0 for a search_link result"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "network": {
+          "$ref": "#/$defs/Network"
+        },
+        "result_type": {
+          "type": "string",
+          "description": "item = a real listing with a live price and item-level affiliate-tracked buy link; search_link = a tracked marketplace search URL with price 0, served for networks not yet live or if the upstream API is briefly unavailable. Never present a search_link to a user as though it were a product.",
+          "enum": [
+            "item",
+            "search_link"
+          ]
+        },
+        "item_id": {
+          "type": "string",
+          "description": "Marketplace item identifier (eBay Browse API form, e.g. v1|358845422976|0)"
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Direct purchase URL, affiliate-tracked by the marketplace. Present to the user unchanged."
+        }
+      }
+    }
+  }
+}
