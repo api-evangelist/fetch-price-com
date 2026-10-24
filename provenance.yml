@@ -25,12 +25,42 @@ artifacts:
     method: derived
     evidence: declared in the artifact
   errors/fetch-price-com-problem-types.yml:
-    method: unknown
-    evidence: no authorship recorded
+    method: derived
+    evidence: declared in the artifact
   front-door-ai/2026-09-17.yml:
     method: unknown
     evidence: no authorship recorded
-  kin/checks-2026-09-24T161608.yml:
+  hosts/fetch-price-com-hosts.yml:
+    method: derived
+    evidence: declared in the artifact
+  integrations/_index.yml:
+    method: generated
+    evidence: carries an API Evangelist house phrase
+  integrations/fetch-price-com-integration-edges.yml:
+    method: searched
+    evidence: declared in the artifact
+  json-ld/fetch-price-com-context.jsonld:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/fetch-price-com-health-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/fetch-price-com-query-request-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/fetch-price-com-query-response-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/fetch-price-com-register-agent-request-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/fetch-price-com-register-agent-response-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/fetch-price-com-stats-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  kin/checks-2026-10-11T110117.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-09-19T193153.yml:
@@ -63,9 +93,27 @@ artifacts:
   kin/score-2026-09-24T161608.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-25T210408.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-25T232841.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-10-03T000835.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-10-03T024842.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-10-11T110117.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
   lifecycle/fetch-price-com-lifecycle.yml:
     method: searched
     evidence: declared in the artifact
+  llms/fetch-price-com-llms-provenance.yml:
+    method: searched
+    evidence: 'derive-llms-provenance.py: harvested'
   llms/fetch-price-com-llms.txt:
     method: searched
     evidence: 'derive-llms-provenance.py: harvested'
@@ -75,9 +123,15 @@ artifacts:
   mcp/fetch-price-com-tool-crosswalk.yml:
     method: derived
     evidence: declared in the artifact
-  openapi/fetch-price-com-openapi.yml:
-    method: generated
-    evidence: declared in the artifact
+  openapi/fetch-price-com-agents-api-openapi.yml:
+    method: unknown
+    evidence: no authorship recorded
+  openapi/fetch-price-com-products-api-openapi.yml:
+    method: unknown
+    evidence: no authorship recorded
+  openapi/fetch-price-com-service-api-openapi.yml:
+    method: unknown
+    evidence: no authorship recorded
   packages/fetch-price-com-packages.yml:
     method: searched
     evidence: declared in the artifact
@@ -90,6 +144,9 @@ artifacts:
   regulatory/fetch-price-com-regulatory-posture.yml:
     method: searched
     evidence: declared in the artifact
+  rules/fetch-price-com-rules.yml:
+    method: generated
+    evidence: declared in the artifact
   security/fetch-price-com-domain-security.yml:
     method: unknown
     evidence: no authorship recorded
@@ -101,6 +158,12 @@ artifacts:
     evidence: no authorship recorded
   skills/fetch-price-com-register-and-search.md:
     method: generated
+    evidence: declared in the artifact
+  vendors/fetch-price-com-vendors.yml:
+    method: unknown
+    evidence: no authorship recorded
+  vocabulary/fetch-price-com-vocabulary.yml:
+    method: derived
     evidence: declared in the artifact
   well-known/fetch-price-com-agent-card-api-host.json:
     method: unknown
